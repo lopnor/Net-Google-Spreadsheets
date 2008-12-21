@@ -4,11 +4,16 @@ use Carp;
 use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::Spreadsheet;
 use LWP::UserAgent;
+use XML::Atom;
 use XML::Atom::Feed;
 use URI;
 use HTTP::Headers;
 
 our $VERSION = '0.01';
+
+BEGIN {
+    $XML::Atom::DefaultVersion = 1;
+}
 
 has username => ( isa => 'Str', is => 'ro', required => 1 );
 has password => ( isa => 'Str', is => 'ro', required => 1 );
@@ -67,18 +72,91 @@ has ua => (
     }
 );
 
-sub list_spreadsheets {
+sub spreadsheets {
     my ($self, $cond) = @_;
-    my $uri = URI->new("http://".$self->host);
-    $uri->path('/feeds/spreadsheets/private/full');
-    $uri->query_form($cond) if $cond;
-    my $req = HTTP::Request->new(GET => "$uri");
+    my $feed = $self->feed(
+        'http://'.$self->host.'/feeds/spreadsheets/private/full',
+        $cond
+    );
+    return [ map { 
+        Net::Google::Spreadsheets::Spreadsheet->new(
+            atom => $_,
+            service => $self,
+        ) 
+    } $feed->entries ];
+}
+
+sub request {
+    my ($self, $args) = @_;
+    my $method = delete $args->{method};
+    $method ||= $args->{content} ? 'POST' : 'GET';
+    my $uri = URI->new($args->{'uri'});
+    $uri->query_form($args->{query}) if $args->{query};
+    my $req = HTTP::Request->new($method => "$uri");
+    $req->content($args->{content}) if $args->{content};
+    $req->header('Content-Type' => $args->{content_type}) if $args->{content_type};
+    if ($args->{header}) {
+        while (my @pair = each %{$args->{header}}) {
+            $req->header(@pair);
+        }
+    }
     my $res = $self->ua->request($req);
     unless ($res->is_success) {
+        warn $res->request->as_string;
+        warn $res->as_string;
         croak "request failed: ",$res->code;
     }
-    my $feed = XML::Atom::Feed->new(\($res->content));
-    return map { Net::Google::Spreadsheets::Spreadsheet->new(atom => $_) } $feed->entries;
+    return $res;
+}
+
+sub feed {
+    my ($self, $url, $query) = @_;
+    my $res = $self->request(
+        {
+            uri => $url,
+            query => $query || undef,
+        }
+    );
+    return XML::Atom::Feed->new(\($res->content));
+}
+
+sub entry {
+    my ($self, $url, $query) = @_;
+    my $res = $self->request(
+        {
+            uri => $url,
+            query => $query || undef,
+        }
+    );
+    return XML::Atom::Entry->new(\($res->content));
+}
+
+sub post {
+    my ($self, $url, $entry, $query) = @_;
+    my $res = $self->request(
+        {
+            uri => $url,
+            query => $query || undef,
+            content => $entry->as_xml,
+            content_type => 'application/atom+xml',
+        }
+    );
+    return XML::Atom::Entry->new(\($res->content));
+}
+
+sub put {
+    my ($self, $args) = @_;
+    my $res = $self->request(
+        {
+            method => 'PUT',
+            uri => $args->{self}->editurl,
+            content => $args->{entry}->as_xml,
+            header => {'If-Match' => $args->{self}->etag},
+#            header => {'If-Match' => '*'},
+            content_type => 'application/atom+xml',
+        }
+    );
+    return XML::Atom::Entry->new(\($res->content));
 }
 
 1;

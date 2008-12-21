@@ -14,19 +14,11 @@ BEGIN {
             'password' => 'your password',
         }
     );
-    plan tests => 1;
+    plan tests => 2;
 }
 my $service = Net::Google::Spreadsheets->new(
     username => $config->{username},
     password => $config->{password},
 );
 isa_ok $service, 'Net::Google::Spreadsheets';
-ok scalar $service->list_spreadsheets;
-my ($spreadsheet) = $service->list_spreadsheets(
-    { 
-        'title' => 'test for Net::Google::Speradsheets',
-        'title-exact' => 'true',
-    }
-);
-ok $spreadsheet;
-isa_ok $spreadsheet, 'Net::Google::Spreadsheets::Spreadsheet';
+ok $service->spreadsheets;
