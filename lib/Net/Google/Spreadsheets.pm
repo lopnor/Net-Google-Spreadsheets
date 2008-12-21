@@ -75,7 +75,7 @@ has ua => (
 sub spreadsheets {
     my ($self, $cond) = @_;
     my $feed = $self->feed(
-        'http://'.$self->host.'/feeds/spreadsheets/private/full',
+        sprintf ('http://%s/feeds/spreadsheets/private/full', $self->host),
         $cond
     );
     return [ map { 
@@ -84,6 +84,31 @@ sub spreadsheets {
             service => $self,
         ) 
     } $feed->entries ];
+}
+
+sub spreadsheet {
+    my ($self, $args) = @_;
+    my $url = sprintf('http://%s/feeds/spreadsheets/', $self->host);
+    my $cond = $args->{title} ? 
+        {
+            title => $args->{title},
+            'title-exact' => 'true'
+        } : {};
+    my $feed = $self->feed(
+        $url."private/full",
+        $cond
+    );
+    my $entry;
+    for ( $feed->entries ) {
+        my ($key) = $_->id =~ m{^$url(.+)$};
+        $entry = $_ and last if $args->{title} && $_->title eq $args->{title};
+        $entry = $_ and last if $args->{key} && $key eq $args->{key};
+    }
+    $entry or return;
+    return Net::Google::Spreadsheets::Spreadsheet->new(
+        atom => $entry,
+        service => $self,
+    );
 }
 
 sub request {
@@ -101,6 +126,8 @@ sub request {
         }
     }
     my $res = $self->ua->request($req);
+#        warn $res->request->as_string;
+#        warn $res->as_string;
     unless ($res->is_success) {
         warn $res->request->as_string;
         warn $res->as_string;
@@ -152,7 +179,6 @@ sub put {
             uri => $args->{self}->editurl,
             content => $args->{entry}->as_xml,
             header => {'If-Match' => $args->{self}->etag},
-#            header => {'If-Match' => '*'},
             content_type => 'application/atom+xml',
         }
     );

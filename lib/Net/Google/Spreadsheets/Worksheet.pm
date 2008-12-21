@@ -7,12 +7,14 @@ has row_count => (
     isa => 'Int',
     is => 'rw',
     default => 100,
+    trigger => sub {$_[0]->update}
 );
 
 has col_count => (
     isa => 'Int',
     is => 'rw',
     default => 20,
+    trigger => sub {$_[0]->update}
 );
 
 around entry => sub {
@@ -21,6 +23,12 @@ around entry => sub {
     $entry->set($self->gs, 'rowCount', $self->row_count);
     $entry->set($self->gs, 'colCount', $self->col_count);
     return $entry;
+};
+
+after _update_atom => sub {
+    my ($self) = @_;
+    $self->{row_count} = $self->atom->get($self->gs, 'rowCount');
+    $self->{col_count} = $self->atom->get($self->gs, 'colCount');
 };
 
 1;

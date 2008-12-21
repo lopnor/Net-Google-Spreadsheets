@@ -2,14 +2,31 @@ package Net::Google::Spreadsheets::Spreadsheet;
 use Moose;
 use XML::Atom;
 use Net::Google::Spreadsheets::Worksheet;
+use Path::Class;
 
 extends 'Net::Google::Spreadsheets::Base';
+
+has +title => (
+    is => 'ro',
+);
 
 has worksheets => (
     isa => 'ArrayRef[Net::Google::Spreadsheets::Worksheet]',
     is => 'rw',
     weaken => 1,
     default => sub { return [] },
+);
+
+has key => (
+    isa => 'Str',
+    is => 'ro',
+    required => 1,
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        my $key = file(URI->new($self->id)->path)->basename;
+        return $key;
+    }
 );
 
 after _update_atom => sub {

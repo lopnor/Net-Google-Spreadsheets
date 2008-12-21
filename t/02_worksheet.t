@@ -14,27 +14,14 @@ BEGIN {
             'password' => 'your password',
         }
     );
-    plan tests => 1;
+    plan tests => 18;
 }
 my $service = Net::Google::Spreadsheets->new(
     username => $config->{username},
     password => $config->{password},
 );
 my $title = 'test for Net::Google::Speradsheets';
-my $spreadsheet = $service->spreadsheets(
-    { 
-        'title' => $title,
-        'title-exact' => 'true',
-    }
-)->[0];
-{
-    ok $spreadsheet;
-    isa_ok $spreadsheet, 'Net::Google::Spreadsheets::Spreadsheet';
-    is $spreadsheet->title, $title;
-    like $spreadsheet->id, qr{^http://spreadsheets.google.com/feeds/spreadsheets/};
-    isa_ok $spreadsheet->author, 'XML::Atom::Person';
-    is $spreadsheet->author->email, $config->{username};
-}
+my $spreadsheet = $service->spreadsheet({title => $title});
 {
     my $ws = $spreadsheet->worksheets->[0];
     isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
@@ -49,9 +36,30 @@ my $spreadsheet = $service->spreadsheets(
 {
     my $ws = $spreadsheet->worksheets->[-1];
     my $title = $ws->title . '+add';
-    ok $ws->title($title);
+    is $ws->title($title), $title;
     is $ws->atom->title, $title;
     is $ws->title, $title;
+}
+{
+    my $ws = $spreadsheet->worksheets->[-1];
+    my $etag_before = $ws->etag;
+    my $before = $ws->col_count;
+    my $col_count = $before + 1;
+    is $ws->col_count($col_count), $col_count;
+    is $ws->atom->get($ws->gs, 'colCount'), $col_count;
+    is $ws->col_count, $col_count;
+    isnt $ws->etag, $etag_before;
+}
+{
+    my $ws = $spreadsheet->worksheets->[-1];
+    my $ss_etag_before = $spreadsheet->etag;
+    my $etag_before = $ws->etag;
+    my $before = $ws->row_count;
+    my $row_count = $before + 1;
+    is $ws->row_count($row_count), $row_count;
+    is $ws->atom->get($ws->gs, 'rowCount'), $row_count;
+    is $ws->row_count, $row_count;
+    isnt $ws->etag, $etag_before;
 }
 {
     my $before = scalar @{$spreadsheet->worksheets};

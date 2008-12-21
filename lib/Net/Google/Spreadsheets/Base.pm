@@ -62,10 +62,7 @@ has title => (
     isa => 'Str',
     is => 'rw',
     default => 'untitled',
-    trigger => sub {
-        my ($self, $arg) = @_;
-        $self->update;
-    }
+    trigger => sub {$_[0]->update}
 );
 
 has author => (
@@ -84,11 +81,29 @@ has container => (
     weak_ref => 1,
 );
 
+sub _update_atom {
+    my ($self) = @_;
+    $self->{title} = $self->atom->title;
+    $self->{id} = $self->atom->get($self->atom->ns, 'id');
+    $self->{author} = $self->atom->author;
+    $self->etag($self->atom->elem->getAttributeNS($self->gd->{uri}, 'etag'));
+    for ($self->atom->link) {
+        my $label = $rel2label{$_->rel} or next;
+        $self->{$label} = $_->href;
+    }
+}
+
 sub entry {
     my ($self) = @_;
     my $entry = XML::Atom::Entry->new;
     $entry->title($self->title) if $self->title;
     return $entry;
+}
+
+sub sync {
+    my ($self) = @_;
+    my $entry = $self->service->entry($self->selfurl);
+    $self->atom($entry);
 }
 
 sub update {
@@ -99,24 +114,8 @@ sub update {
             entry => $self->entry,
         }
     );
+    $self->container->sync;
     $self->atom($atom);
-}
-
-sub sync {
-    my ($self) = @_;
-    $self->atom($self->service->entry($self->selfurl));
-}
-
-sub _update_atom {
-    my ($self) = @_;
-    $self->{title} = $self->atom->title;
-    $self->{id} = $self->atom->get($self->atom->ns, 'id');
-    $self->{author} = $self->atom->author;
-    $self->{etag} = $self->atom->elem->getAttributeNS($self->gd->{uri}, 'etag');
-    for ($self->atom->link) {
-        my $label = $rel2label{$_->rel} or next;
-        $self->{$label} = $_->href;
-    }
 }
 
 sub delete {
