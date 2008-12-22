@@ -25,9 +25,11 @@ MANIFEST			This list of files
 META.yml
 README
 t/00_compile.t
-t/01_spreadsheet.t
-t/02_worksheet.t
-t/03_rows.t
+t/01_instanciate.t
+t/02_spreadsheets.t
+t/03_spreadsheet.t
+t/04_worksheet.t
+t/05_rows.t
 xt/01_podspell.t
 xt/02_perlcritic.t
 xt/03_pod.t
