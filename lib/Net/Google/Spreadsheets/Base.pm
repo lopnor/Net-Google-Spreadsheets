@@ -10,7 +10,6 @@ has service => (
     required => 1,
     lazy => 1,
     default => sub { shift->container->service },
-    weak_ref => 1,
 );
 
 my %ns = (
@@ -78,7 +77,6 @@ has etag => (
 has container => (
     isa => 'Maybe[Net::Google::Spreadsheets::Base]',
     is => 'ro',
-    weak_ref => 1,
 );
 
 sub _update_atom {

@@ -25,4 +25,5 @@ BEGIN {
 }
 SKIP: {
     my $sheets = $service->spreadsheets;
+    ok scalar @$sheets;
 }

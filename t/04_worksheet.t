@@ -3,7 +3,7 @@ use Test::More;
 
 use Net::Google::Spreadsheets;
 
-my $service;
+my $ss;
 BEGIN {
     plan skip_all => 'set TEST_NET_GOOGLE_SPREADSHEETS to run this test'
         unless $ENV{TEST_NET_GOOGLE_SPREADSHEETS};
@@ -14,35 +14,35 @@ BEGIN {
             'password' => 'your password',
         }
     );
-    $service = Net::Google::Spreadsheets->new(
+    my $service = Net::Google::Spreadsheets->new(
         username => $config->{username},
         password => $config->{password},
     );
     my $title = 'test for Net::Google::Spreadsheets';
-    my $sheet = $service->spreadsheet({title => $title});
-    plan skip_all => "test spreadsheet '$title' doesn't exist." unless $sheet;
+    $ss = $service->spreadsheet({title => $title});
+    plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
     plan tests => 18;
 }
 {
-    my $ws = $spreadsheet->worksheets->[0];
+    my $ws = $ss->worksheets->[0];
     isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
 }
 {
-    my $before = scalar @{$spreadsheet->worksheets};
-    my $ws = $spreadsheet->add_worksheet;
+    my $before = scalar @{$ss->worksheets};
+    my $ws = $ss->add_worksheet;
     isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
-    is scalar @{$spreadsheet->worksheets}, $before + 1;
-    ok grep {$_ == $ws} @{$spreadsheet->worksheets};
+    is scalar @{$ss->worksheets}, $before + 1;
+    ok grep {$_ == $ws} @{$ss->worksheets};
 }
 {
-    my $ws = $spreadsheet->worksheets->[-1];
+    my $ws = $ss->worksheets->[-1];
     my $title = $ws->title . '+add';
     is $ws->title($title), $title;
     is $ws->atom->title, $title;
     is $ws->title, $title;
 }
 {
-    my $ws = $spreadsheet->worksheets->[-1];
+    my $ws = $ss->worksheets->[-1];
     my $etag_before = $ws->etag;
     my $before = $ws->col_count;
     my $col_count = $before + 1;
@@ -52,8 +52,8 @@ BEGIN {
     isnt $ws->etag, $etag_before;
 }
 {
-    my $ws = $spreadsheet->worksheets->[-1];
-    my $ss_etag_before = $spreadsheet->etag;
+    my $ws = $ss->worksheets->[-1];
+    my $ss_etag_before = $ss->etag;
     my $etag_before = $ws->etag;
     my $before = $ws->row_count;
     my $row_count = $before + 1;
@@ -63,9 +63,9 @@ BEGIN {
     isnt $ws->etag, $etag_before;
 }
 {
-    my $before = scalar @{$spreadsheet->worksheets};
-    my $ws = $spreadsheet->worksheets->[-1];
+    my $before = scalar @{$ss->worksheets};
+    my $ws = $ss->worksheets->[-1];
     ok $ws->delete;
-    is scalar @{$spreadsheet->worksheets}, $before - 1;
-    ok ! grep {$_ == $ws} @{$spreadsheet->worksheets};
+    is scalar @{$ss->worksheets}, $before - 1;
+    ok ! grep {$_ == $ws} @{$ss->worksheets};
 }

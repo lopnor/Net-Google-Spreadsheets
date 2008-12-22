@@ -21,14 +21,10 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $sheet = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $sheet;
-    plan tests => 15;
-}
-
-{
-    ok $service->spreadsheets;
+    plan tests => 10;
 }
 {
-    my $title = 'test for Net::Google::Speradsheets';
+    my $title = 'test for Net::Google::Spreadsheets';
     my $ss = $service->spreadsheet({title => $title});
     ok $ss;
     isa_ok $ss, 'Net::Google::Spreadsheets::Spreadsheet';
@@ -44,11 +40,4 @@ BEGIN {
         isa_ok $ss2, 'Net::Google::Spreadsheets::Spreadsheet';
         is $ss2->key, $key;
     }
-}
-{
-    my $title = 'test for Net::Google::Speradsheets';
-    my $spreadsheet = $service->spreadsheet({ 'title' => $title });
-    ok $spreadsheet;
-    isa_ok $spreadsheet, 'Net::Google::Spreadsheets::Spreadsheet';
-    is $spreadsheet->title, $title;
 }
