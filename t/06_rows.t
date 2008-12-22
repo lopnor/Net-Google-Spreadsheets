@@ -21,8 +21,28 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 1;
+    plan tests => 6;
     $ws = $ss->add_worksheet;
+}
+{
+    is scalar $ws->rows, 0;
+    $ws->batchupdate_cell(
+        {col => 1, row => 1, input_value => 'name'},
+        {col => 2, row => 1, input_value => 'mail'},
+        {col => 3, row => 1, input_value => 'nick'},
+    );
+    is scalar $ws->rows, 0;
+    my $row = $ws->insert_row(
+        {
+            name => 'Nobuo Danjou',
+            mail => 'nobuo.danjou@gmail.com',
+            nick => 'lopnor',
+        }
+    );
+    isa_ok $row, 'Net::Google::Spreadsheets::Row';
+    is scalar $ws->rows, 1;
+    ok $row->delete;
+    is scalar $ws->rows, 0;
 }
 END {
     $ws->delete;
