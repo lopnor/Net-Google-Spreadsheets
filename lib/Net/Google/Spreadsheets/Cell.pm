@@ -54,7 +54,7 @@ __END__
 
 Net::Google::Spreadsheets::Cell - A representation class for Google Spreadsheet cell.
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
 =head1 AUTHOR
 

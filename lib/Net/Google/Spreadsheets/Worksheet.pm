@@ -103,7 +103,7 @@ __END__
 
 Net::Google::Spreadsheets::Worksheet - Representation of worksheet.
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
 =head1 AUTHOR
 

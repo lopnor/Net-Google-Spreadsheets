@@ -50,7 +50,7 @@ __END__
 
 Net::Google::Spreadsheets::Spreadsheet - Representation of spreadsheet
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
 =head1 AUTHOR
 

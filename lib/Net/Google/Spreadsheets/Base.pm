@@ -146,4 +146,11 @@ __END__
 
 Net::Google::Spreadsheets::Base - Base class of Net::Google::Spreadsheets::*.
 
+=head1 SYNOPSIS
+
+=head1 AUTHOR
+
+Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
+
 =cut
+
