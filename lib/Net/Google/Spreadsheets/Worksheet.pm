@@ -63,13 +63,9 @@ sub batchupdate_cell {
     my $feed = XML::Atom::Feed->new;
     for ( @args ) {
         my $id = sprintf("%s/R%sC%s",$self->cellsfeed, $_->{row}, $_->{col});
-        my $entry = Net::Google::Spreadsheets::Cell->new(
-            id => $id,
-            editurl => $id,
-            row => $_->{row},
-            col => $_->{col},
-            input_value => $_->{input_value},
-        )->entry;
+        $_->{id} = $id;
+        $_->{editurl} = $id;
+        my $entry = Net::Google::Spreadsheets::Cell->new($_)->entry;
         $entry->set($self->batch, operation => '', {type => 'update'});
         $entry->set($self->batch, id => $id);
         $feed->add_entry($entry);
@@ -82,17 +78,16 @@ sub batchupdate_cell {
             container => $self,
         )
     } grep {
-        my ($node) = $_->elem->getChildrenByTagNameNS($self->batch->{uri}, 'status');
+        my ($node) = $_->elem->getElementsByTagNameNS($self->batch->{uri}, 'status');
         $node->getAttribute('code') == 200;
     } $res_feed->entries;
 }
 
 sub insert_row {
     my ($self, $args) = @_;
-    my $entry = XML::Atom::Entry->new;
-    while (my ($key, $value) = each %{$args}) {
-        $entry->set($self->gsx, $key, $value);
-    }
+    my $entry = Net::Google::Spreadsheets::Row->new(
+        content => $args,
+    )->entry;
     my $atom = $self->service->post($self->content, $entry);
     $self->sync;
     return Net::Google::Spreadsheets::Row->new(

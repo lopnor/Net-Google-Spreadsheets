@@ -24,25 +24,25 @@ BEGIN {
     plan tests => 18;
 }
 {
-    my $ws = $ss->worksheets->[0];
+    my ($ws) = $ss->worksheets;
     isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
 }
 {
-    my $before = scalar @{$ss->worksheets};
+    my $before = scalar $ss->worksheets;
     my $ws = $ss->add_worksheet;
     isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
-    is scalar @{$ss->worksheets}, $before + 1;
-    ok grep {$_ == $ws} @{$ss->worksheets};
+    is scalar $ss->worksheets, $before + 1;
+    ok grep {$_->id eq $ws->id} $ss->worksheets;
 }
 {
-    my $ws = $ss->worksheets->[-1];
+    my $ws = ($ss->worksheets)[-1];
     my $title = $ws->title . '+add';
     is $ws->title($title), $title;
     is $ws->atom->title, $title;
     is $ws->title, $title;
 }
 {
-    my $ws = $ss->worksheets->[-1];
+    my $ws = ($ss->worksheets)[-1];
     my $etag_before = $ws->etag;
     my $before = $ws->col_count;
     my $col_count = $before + 1;
@@ -52,7 +52,7 @@ BEGIN {
     isnt $ws->etag, $etag_before;
 }
 {
-    my $ws = $ss->worksheets->[-1];
+    my $ws = ($ss->worksheets)[-1];
     my $ss_etag_before = $ss->etag;
     my $etag_before = $ws->etag;
     my $before = $ws->row_count;
@@ -63,9 +63,9 @@ BEGIN {
     isnt $ws->etag, $etag_before;
 }
 {
-    my $before = scalar @{$ss->worksheets};
-    my $ws = $ss->worksheets->[-1];
+    my $before = scalar $ss->worksheets;
+    my $ws = ($ss->worksheets)[-1];
     ok $ws->delete;
-    is scalar @{$ss->worksheets}, $before - 1;
-    ok ! grep {$_ == $ws} @{$ss->worksheets};
+    is scalar $ss->worksheets, $before - 1;
+    ok ! grep {$_ == $ws} $ss->worksheets;
 }
