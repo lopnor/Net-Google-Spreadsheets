@@ -3,7 +3,7 @@ use Test::More;
 
 use Net::Google::Spreadsheets;
 
-my $sheet;
+my $service;
 BEGIN {
     plan skip_all => 'set TEST_NET_GOOGLE_SPREADSHEETS to run this test'
         unless $ENV{TEST_NET_GOOGLE_SPREADSHEETS};
@@ -14,14 +14,15 @@ BEGIN {
             'password' => 'your password',
         }
     );
-    my $service = Net::Google::Spreadsheets->new(
+    $service = Net::Google::Spreadsheets->new(
         username => $config->{username},
         password => $config->{password},
     );
     my $title = 'test for Net::Google::Spreadsheets';
-    $sheet = $service->spreadsheet({title => $title});
+    my $sheet = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $sheet;
     plan tests => 1;
 }
-my $ws = $sheet->worksheets->[0];
-isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
+SKIP: {
+    my $sheets = $service->spreadsheets;
+}
