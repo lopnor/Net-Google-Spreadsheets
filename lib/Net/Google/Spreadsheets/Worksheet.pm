@@ -63,8 +63,7 @@ sub batchupdate_cell {
     my $feed = XML::Atom::Feed->new;
     for ( @args ) {
         my $id = sprintf("%s/R%sC%s",$self->cellsfeed, $_->{row}, $_->{col});
-        $_->{id} = $id;
-        $_->{editurl} = $id;
+        $_->{id} = $_->{editurl} = $id;
         my $entry = Net::Google::Spreadsheets::Cell->new($_)->entry;
         $entry->set($self->batch, operation => '', {type => 'update'});
         $entry->set($self->batch, id => $id);
