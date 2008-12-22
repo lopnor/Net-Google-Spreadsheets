@@ -16,6 +16,7 @@ my %ns = (
     gd => 'http://schemas.google.com/g/2005',
     gs => 'http://schemas.google.com/spreadsheets/2006',
     gsx => 'http://schemas.google.com/spreadsheets/2006/extended',
+    batch => 'http://schemas.google.com/gdata/batch',
 );
 
 while (my ($prefix, $uri) = each %ns) {
@@ -54,7 +55,7 @@ has id => (
 
 has content => (
     isa => 'Str',
-    is => 'rw',
+    is => 'ro',
 );
 
 has title => (
@@ -91,6 +92,13 @@ sub _update_atom {
     }
 }
 
+sub list_contents {
+    my ($self, $class, $cond) = @_;
+    $self->content or return;
+    my $feed = $self->service->feed($self->content, $cond);
+    return map {$class->new(container => $self, atom => $_)} $feed->entries;
+}
+
 sub entry {
     my ($self) = @_;
     my $entry = XML::Atom::Entry->new;
@@ -106,6 +114,7 @@ sub sync {
 
 sub update {
     my ($self) = @_;
+    $self->etag or return;
     my $atom = $self->service->put(
         {
             self => $self,

@@ -159,16 +159,17 @@ sub entry {
 }
 
 sub post {
-    my ($self, $url, $entry, $query) = @_;
+    my ($self, $url, $entry, $header) = @_;
     my $res = $self->request(
         {
             uri => $url,
-            query => $query || undef,
             content => $entry->as_xml,
+            header => $header || undef,
             content_type => 'application/atom+xml',
         }
     );
-    return XML::Atom::Entry->new(\($res->content));
+    return (ref $entry)->new(\($res->content));
+#    return XML::Atom::Entry->new(\($res->content));
 }
 
 sub put {
@@ -178,7 +179,7 @@ sub put {
             method => 'PUT',
             uri => $args->{self}->editurl,
             content => $args->{entry}->as_xml,
-            header => {'If-Match' => $args->{self}->etag},
+            header => {'If-Match' => $args->{self}->etag },
             content_type => 'application/atom+xml',
         }
     );
@@ -196,17 +197,14 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
 
   use Net::Google::Spreadsheets;
 
-  my $api = Net::Google::Spreadsheets->new;
-  my $res = $api->login(
-    {
-        username => 'myname@gmail.com', 
-        password => 'mypassword'
-    }
+  my $service = Net::Google::Spreadsheets->new(
+    username => 'myname@gmail.com', 
+    password => 'mypassword'
   );
   
-  my @spreadsheets = $api->list();
+  my @spreadsheets = $service->spreadsheets();
 
-  my $spreadsheet = $api->spreadsheet('pZV-pns_sm9PtH2WowhU2Ew');
+  my $spreadsheet = $api->spreadsheet({key => 'pZV-pns_sm9PtH2WowhU2Ew'});
   my $worksheet = $spreadsheet->worksheet(1);
 
   my @fields = $worksheet->fields();
