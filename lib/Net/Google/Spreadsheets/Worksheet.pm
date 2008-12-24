@@ -27,8 +27,8 @@ has cellsfeed => (
 around entry => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    $entry->set($self->gs, 'rowCount', $self->row_count);
-    $entry->set($self->gs, 'colCount', $self->col_count);
+    $entry->set($self->gsns, 'rowCount', $self->row_count);
+    $entry->set($self->gsns, 'colCount', $self->col_count);
     return $entry;
 };
 
@@ -38,8 +38,8 @@ after _update_atom => sub {
     ($self->{cellsfeed}) = map {$_->href} grep {
         $_->rel eq 'http://schemas.google.com/spreadsheets/2006#cellsfeed'
     } $self->atom->link;
-    $self->{row_count} = $self->atom->get($self->gs, 'rowCount');
-    $self->{col_count} = $self->atom->get($self->gs, 'colCount');
+    $self->{row_count} = $self->atom->get($self->gsns, 'rowCount');
+    $self->{col_count} = $self->atom->get($self->gsns, 'colCount');
 };
 
 
@@ -51,7 +51,7 @@ sub rows {
 sub cell {
     my ($self, $row, $col) = @_;
     $self->cellsfeed or return;
-    my $url = sprintf "%s/R%sC%s", $self->cellsfeed, $row, $col;
+    my $url = sprintf("%s/R%sC%s", $self->cellsfeed, $row, $col);
     return Net::Google::Spreadsheets::Cell->new(
         container => $self,
         atom => $self->service->entry($url),
@@ -65,8 +65,8 @@ sub batchupdate_cell {
         my $id = sprintf("%s/R%sC%s",$self->cellsfeed, $_->{row}, $_->{col});
         $_->{id} = $_->{editurl} = $id;
         my $entry = Net::Google::Spreadsheets::Cell->new($_)->entry;
-        $entry->set($self->batch, operation => '', {type => 'update'});
-        $entry->set($self->batch, id => $id);
+        $entry->set($self->batchns, operation => '', {type => 'update'});
+        $entry->set($self->batchns, id => $id);
         $feed->add_entry($entry);
     }
     my $res_feed = $self->service->post($self->cellsfeed."/batch", $feed, {'If-Match' => '*'});
@@ -77,7 +77,7 @@ sub batchupdate_cell {
             container => $self,
         )
     } grep {
-        my ($node) = $_->elem->getElementsByTagNameNS($self->batch->{uri}, 'status');
+        my ($node) = $_->elem->getElementsByTagNameNS($self->batchns->{uri}, 'status');
         $node->getAttribute('code') == 200;
     } $res_feed->entries;
 }

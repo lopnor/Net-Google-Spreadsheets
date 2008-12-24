@@ -126,11 +126,9 @@ sub request {
         }
     }
     my $res = $self->ua->request($req);
+    unless ($res->is_success) {
 #        warn $res->request->as_string;
 #        warn $res->as_string;
-    unless ($res->is_success) {
-        warn $res->request->as_string;
-        warn $res->as_string;
         croak "request failed: ",$res->code;
     }
     return $res;

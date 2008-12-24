@@ -12,7 +12,7 @@ has +content => (
 
 after _update_atom => sub {
     my ($self) = @_;
-    for my $node ($self->atom->elem->getElementsByTagNameNS($self->gsx->{uri}, '*')) {
+    for my $node ($self->elem->getElementsByTagNameNS($self->gsxns->{uri}, '*')) {
         $self->{content}->{$node->localname} = $node->textContent;
     }
 };
@@ -21,7 +21,7 @@ around entry => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
     while (my ($key, $value) = each %{$self->{content}}) {
-        $entry->set($self->gsx, $key, $value);
+        $entry->set($self->gsxns, $key, $value);
     }
     return $entry;
 };

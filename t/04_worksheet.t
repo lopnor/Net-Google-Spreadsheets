@@ -21,7 +21,7 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 18;
+    plan tests => 28;
 }
 {
     my ($ws) = $ss->worksheets;
@@ -43,24 +43,16 @@ BEGIN {
 }
 {
     my $ws = ($ss->worksheets)[-1];
-    my $etag_before = $ws->etag;
-    my $before = $ws->col_count;
-    my $col_count = $before + 1;
-    is $ws->col_count($col_count), $col_count;
-    is $ws->atom->get($ws->gs, 'colCount'), $col_count;
-    is $ws->col_count, $col_count;
-    isnt $ws->etag, $etag_before;
-}
-{
-    my $ws = ($ss->worksheets)[-1];
-    my $ss_etag_before = $ss->etag;
-    my $etag_before = $ws->etag;
-    my $before = $ws->row_count;
-    my $row_count = $before + 1;
-    is $ws->row_count($row_count), $row_count;
-    is $ws->atom->get($ws->gs, 'rowCount'), $row_count;
-    is $ws->row_count, $row_count;
-    isnt $ws->etag, $etag_before;
+    for (1 .. 3) {
+        my $col_count = $ws->col_count + 1;
+        my $row_count = $ws->row_count + 1;
+        is $ws->col_count($col_count), $col_count;
+        is $ws->atom->get($ws->gsns, 'colCount'), $col_count;
+        is $ws->col_count, $col_count;
+        is $ws->row_count($row_count), $row_count;
+        is $ws->atom->get($ws->gsns, 'rowCount'), $row_count;
+        is $ws->row_count, $row_count;
+    }
 }
 {
     my $before = scalar $ss->worksheets;

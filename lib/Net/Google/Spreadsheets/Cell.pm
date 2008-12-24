@@ -21,7 +21,7 @@ has input_value => (
 
 after _update_atom => sub {
     my ($self) = @_;
-    my ($elem) = $self->atom->elem->getElementsByTagNameNS($self->gs->{uri}, 'cell');
+    my ($elem) = $self->elem->getElementsByTagNameNS($self->gsns->{uri}, 'cell');
     $self->{row} = $elem->getAttribute('row');
     $self->{col} = $elem->getAttribute('col');
     $self->{input_value} = $elem->getAttribute('inputValue');
@@ -31,7 +31,7 @@ after _update_atom => sub {
 around entry => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    $entry->set($self->gs, 'cell', '', 
+    $entry->set($self->gsns, 'cell', '', 
         {
             row => $self->row,
             col => $self->col,

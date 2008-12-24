@@ -20,7 +20,7 @@ my %ns = (
 );
 
 while (my ($prefix, $uri) = each %ns) {
-    has $prefix => (
+    has $prefix.'ns' => (
         isa => 'XML::Atom::Namespace',
         is => 'ro',
         required => 1,
@@ -42,10 +42,11 @@ has atom => (
     is => 'rw',
     trigger => sub {
         my ($self, $arg) = @_;
-        my $id = $self->atom->get($self->atom->ns, 'id');
+        my $id = $self->atom->get($self->ns, 'id');
         croak "can't set different id!" if $self->id && $self->id ne $id;
         $self->_update_atom;
     },
+    handles => ['ns', 'elem', 'author'],
 );
 
 has id => (
@@ -65,11 +66,6 @@ has title => (
     trigger => sub {$_[0]->update}
 );
 
-has author => (
-    isa => 'XML::Atom::Person',
-    is => 'rw',
-);
-
 has etag => (
     isa => 'Str',
     is => 'rw',
@@ -83,9 +79,8 @@ has container => (
 sub _update_atom {
     my ($self) = @_;
     $self->{title} = $self->atom->title;
-    $self->{id} = $self->atom->get($self->atom->ns, 'id');
-    $self->{author} = $self->atom->author;
-    $self->etag($self->atom->elem->getAttributeNS($self->gd->{uri}, 'etag'));
+    $self->{id} = $self->atom->get($self->ns, 'id');
+    $self->etag($self->elem->getAttributeNS($self->gdns->{uri}, 'etag'));
     for ($self->atom->link) {
         my $label = $rel2label{$_->rel} or next;
         $self->{$label} = $_->href;
