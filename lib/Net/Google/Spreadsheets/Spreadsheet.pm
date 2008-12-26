@@ -6,6 +6,10 @@ use Path::Class;
 
 extends 'Net::Google::Spreadsheets::Base';
 
+has +accessor => (
+    default => 'Net::Google::Spreadsheets::Worksheet'
+);
+
 has +title => (
     is => 'ro',
 );
@@ -26,6 +30,11 @@ after _update_atom => sub {
     my ($self) = @_;
     $self->{content} = $self->atom->content->elem->getAttribute('src');
 };
+
+sub worksheet {
+    my ($self, $cond) = @_;
+    return ($self->worksheets($cond))[0];
+}
 
 sub worksheets {
     my ($self, $cond) = @_;

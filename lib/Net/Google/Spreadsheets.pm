@@ -1,5 +1,8 @@
 package Net::Google::Spreadsheets;
 use Moose;
+
+extends 'Net::Google::Spreadsheets::Base';
+
 use Carp;
 use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::Spreadsheet;
@@ -14,6 +17,11 @@ our $VERSION = '0.01';
 BEGIN {
     $XML::Atom::DefaultVersion = 1;
 }
+
+has contents => (
+    is => 'ro',
+    default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full'
+);
 
 has username => ( isa => 'Str', is => 'ro', required => 1 );
 has password => ( isa => 'Str', is => 'ro', required => 1 );
@@ -45,13 +53,6 @@ has auth => (
     },
 );
 
-has host => (
-    isa => 'Str',
-    is => 'ro',
-    required => 1,
-    default => 'spreadsheets.google.com',
-);
-
 has ua => (
     isa => 'LWP::UserAgent',
     is => 'ro',
@@ -73,42 +74,34 @@ has ua => (
 );
 
 sub spreadsheets {
-    my ($self, $cond) = @_;
-    my $feed = $self->feed(
-        sprintf ('http://%s/feeds/spreadsheets/private/full', $self->host),
-        $cond
-    );
-    return [ map { 
-        Net::Google::Spreadsheets::Spreadsheet->new(
-            atom => $_,
-            service => $self,
-        ) 
-    } $feed->entries ];
-}
-
-sub spreadsheet {
     my ($self, $args) = @_;
-    my $url = sprintf('http://%s/feeds/spreadsheets/', $self->host);
     my $cond = $args->{title} ? 
         {
             title => $args->{title},
             'title-exact' => 'true'
         } : {};
     my $feed = $self->feed(
-        $url."private/full",
+        $self->contents,
         $cond
     );
-    my $entry;
-    for ( $feed->entries ) {
-        my ($key) = $_->id =~ m{^$url(.+)$};
-        $entry = $_ and last if $args->{title} && $_->title eq $args->{title};
-        $entry = $_ and last if $args->{key} && $key eq $args->{key};
-    }
-    $entry or return;
-    return Net::Google::Spreadsheets::Spreadsheet->new(
-        atom => $entry,
-        service => $self,
-    );
+    
+    return grep {
+        (!%$args && 1)
+        ||
+        ($args->{key} && $_->key eq $args->{key})
+        ||
+        ($args->{title} && $_->title eq $args->{title})
+    } map {
+        Net::Google::Spreadsheets::Spreadsheet->new(
+            atom => $_, 
+            service => $self
+        )
+    } $feed->entries;
+}
+
+sub spreadsheet {
+    my ($self, $args) = @_;
+    return ($self->spreadsheets($args))[0];
 }
 
 sub request {
@@ -202,7 +195,11 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   
   my @spreadsheets = $service->spreadsheets();
 
-  my $spreadsheet = $api->spreadsheet({key => 'pZV-pns_sm9PtH2WowhU2Ew'});
+  # find a spreadsheet by key
+  my $spreadsheet = $service->spreadsheet({key => 'pZV-pns_sm9PtH2WowhU2Ew'});
+
+  # find a spreadsheet by title
+  my $spreadsheet = $service->spreadsheet({title => 'list for new year cards'});
   my $worksheet = $spreadsheet->worksheet(1);
 
   my @fields = $worksheet->fields();

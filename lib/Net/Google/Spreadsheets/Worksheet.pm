@@ -82,7 +82,7 @@ sub batchupdate_cell {
     } $res_feed->entries;
 }
 
-sub insert_row {
+sub add_row {
     my ($self, $args) = @_;
     my $entry = Net::Google::Spreadsheets::Row->new(
         content => $args,

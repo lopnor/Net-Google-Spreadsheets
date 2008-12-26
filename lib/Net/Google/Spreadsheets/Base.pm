@@ -3,6 +3,7 @@ use Moose;
 use Carp;
 use Moose::Util::TypeConstraints;
 use Net::Google::Spreadsheets::Base;
+use UNIVERSAL::require;
 
 has service => (
     isa => 'Net::Google::Spreadsheets',
@@ -36,6 +37,13 @@ my %rel2label = (
 for (values %rel2label) {
     has $_ => (isa => 'Str', is => 'ro');
 }
+
+has accessor => (
+    isa => 'Str',
+    is => 'ro',
+);
+
+
 
 has atom => (
     isa => 'XML::Atom::Entry',

@@ -37,7 +37,7 @@ BEGIN {
         mail => 'nobuo.danjou@gmail.com',
         nick => 'lopnor',
     };
-    my $row = $ws->insert_row($value);
+    my $row = $ws->add_row($value);
     isa_ok $row, 'Net::Google::Spreadsheets::Row';
     is_deeply $row->content, $value;
     my $value2 = {

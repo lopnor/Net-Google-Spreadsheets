@@ -21,7 +21,20 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 28;
+    plan tests => 27;
+}
+{
+    my @worksheets = $ss->worksheets;
+    ok scalar @worksheets;
+}
+{
+    my $title = 'new worksheet';
+    my $ws = $ss->add_worksheet({title => $title});
+    isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
+    is $ws->title, $title;
+    my $ws2 = $ss->worksheet({title => $title});
+    isa_ok $ws2, 'Net::Google::Spreadsheets::Worksheet';
+    is $ws2->title, $title;
 }
 {
     my ($ws) = $ss->worksheets;
@@ -43,7 +56,7 @@ BEGIN {
 }
 {
     my $ws = ($ss->worksheets)[-1];
-    for (1 .. 3) {
+    for (1 .. 2) {
         my $col_count = $ws->col_count + 1;
         my $row_count = $ws->row_count + 1;
         is $ws->col_count($col_count), $col_count;

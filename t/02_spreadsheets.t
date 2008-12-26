@@ -23,7 +23,7 @@ BEGIN {
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $sheet;
     plan tests => 1;
 }
-SKIP: {
-    my $sheets = $service->spreadsheets;
-    ok scalar @$sheets;
+{
+    my @sheets = $service->spreadsheets;
+    ok scalar @sheets;
 }

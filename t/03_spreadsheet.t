@@ -21,7 +21,21 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $sheet = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $sheet;
-    plan tests => 10;
+    plan tests => 15;
+}
+{
+    my $title = 'non exisitng spreadsheet name';
+    my $ss = $service->spreadsheet({title => $title});
+    is $ss, undef;
+    my @sss = $service->spreadsheets({title => $title});
+    is scalar @sss, 0;
+}
+{
+    my $key = 'foobar';
+    my $ss = $service->spreadsheet({key => $key});
+    is $ss, undef;
+    my @sss = $service->spreadsheets({key => $key});
+    is scalar @sss, 0;
 }
 {
     my $title = 'test for Net::Google::Spreadsheets';
@@ -39,5 +53,6 @@ BEGIN {
         ok $ss2;
         isa_ok $ss2, 'Net::Google::Spreadsheets::Spreadsheet';
         is $ss2->key, $key;
+        is $ss2->title, $title;
     }
 }
