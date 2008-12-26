@@ -5,12 +5,8 @@ extends 'Net::Google::Spreadsheets::Base';
 
 use Carp;
 use Net::Google::AuthSub;
+use Net::Google::Spreadsheets::UserAgent;
 use Net::Google::Spreadsheets::Spreadsheet;
-use LWP::UserAgent;
-use XML::Atom;
-use XML::Atom::Feed;
-use URI;
-use HTTP::Headers;
 
 our $VERSION = '0.01';
 
@@ -23,9 +19,6 @@ has contents => (
     default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full'
 );
 
-has username => ( isa => 'Str', is => 'ro', required => 1 );
-has password => ( isa => 'Str', is => 'ro', required => 1 );
-
 has source => (
     isa => 'Str',
     is => 'ro',
@@ -33,13 +26,16 @@ has source => (
     default => sub { __PACKAGE__.'-'.$VERSION },
 );
 
-has auth => (
-    isa => 'Str',
-    is => 'rw',
+has username => ( isa => 'Str', is => 'ro', required => 1 );
+has password => ( isa => 'Str', is => 'ro', required => 1 );
+
+has ua => (
+    isa => 'Net::Google::Spreadsheets::UserAgent',
+    is => 'ro',
     required => 1,
     lazy => 1,
     default => sub {
-        my $self = shift;
+        my ($self) = @_;
         my $authsub = Net::Google::AuthSub->new(
             service => 'wise',
             source => $self->source,
@@ -49,28 +45,12 @@ has auth => (
             $self->password,
         );
         $res->is_success or return;
-        return $res->auth;
+        Net::Google::Spreadsheets::UserAgent->new(
+            source => $self->source,
+            auth => $res->auth,
+        );
     },
-);
-
-has ua => (
-    isa => 'LWP::UserAgent',
-    is => 'ro',
-    required => 1,
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        my $ua = LWP::UserAgent->new(
-            agent => $self->source,
-        );
-        $ua->default_headers(
-            HTTP::Headers->new(
-                Authorization => sprintf('GoogleLogin auth=%s', $self->auth),
-                GData_Version => 2,
-            )
-        );
-        return $ua;
-    }
+    handles => [qw(request feed entry post put)],
 );
 
 sub spreadsheets {
@@ -102,79 +82,6 @@ sub spreadsheets {
 sub spreadsheet {
     my ($self, $args) = @_;
     return ($self->spreadsheets($args))[0];
-}
-
-sub request {
-    my ($self, $args) = @_;
-    my $method = delete $args->{method};
-    $method ||= $args->{content} ? 'POST' : 'GET';
-    my $uri = URI->new($args->{'uri'});
-    $uri->query_form($args->{query}) if $args->{query};
-    my $req = HTTP::Request->new($method => "$uri");
-    $req->content($args->{content}) if $args->{content};
-    $req->header('Content-Type' => $args->{content_type}) if $args->{content_type};
-    if ($args->{header}) {
-        while (my @pair = each %{$args->{header}}) {
-            $req->header(@pair);
-        }
-    }
-    my $res = $self->ua->request($req);
-    unless ($res->is_success) {
-#        warn $res->request->as_string;
-#        warn $res->as_string;
-        croak "request failed: ",$res->code;
-    }
-    return $res;
-}
-
-sub feed {
-    my ($self, $url, $query) = @_;
-    my $res = $self->request(
-        {
-            uri => $url,
-            query => $query || undef,
-        }
-    );
-    return XML::Atom::Feed->new(\($res->content));
-}
-
-sub entry {
-    my ($self, $url, $query) = @_;
-    my $res = $self->request(
-        {
-            uri => $url,
-            query => $query || undef,
-        }
-    );
-    return XML::Atom::Entry->new(\($res->content));
-}
-
-sub post {
-    my ($self, $url, $entry, $header) = @_;
-    my $res = $self->request(
-        {
-            uri => $url,
-            content => $entry->as_xml,
-            header => $header || undef,
-            content_type => 'application/atom+xml',
-        }
-    );
-    return (ref $entry)->new(\($res->content));
-#    return XML::Atom::Entry->new(\($res->content));
-}
-
-sub put {
-    my ($self, $args) = @_;
-    my $res = $self->request(
-        {
-            method => 'PUT',
-            uri => $args->{self}->editurl,
-            content => $args->{entry}->as_xml,
-            header => {'If-Match' => $args->{self}->etag },
-            content_type => 'application/atom+xml',
-        }
-    );
-    return XML::Atom::Entry->new(\($res->content));
 }
 
 1;

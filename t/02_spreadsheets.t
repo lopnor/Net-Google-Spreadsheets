@@ -21,9 +21,13 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $sheet = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $sheet;
-    plan tests => 1;
+    plan tests => 5;
 }
 {
     my @sheets = $service->spreadsheets;
     ok scalar @sheets;
+    isa_ok $sheets[0], 'Net::Google::Spreadsheets::Spreadsheet';
+    ok $sheets[0]->title;
+    ok $sheets[0]->key;
+    ok $sheets[0]->etag;
 }
