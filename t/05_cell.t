@@ -21,12 +21,12 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 11;
+    plan tests => 22;
     $ws = $ss->add_worksheet;
 }
 {
     my $value = 'first cell value';
-    my $cell = $ws->cell(1,1);
+    my $cell = $ws->cell({col => 1, row => 1});
     isa_ok $cell, 'Net::Google::Spreadsheets::Cell';
     my $previous = $cell->content;
     is $previous, '';
@@ -45,14 +45,45 @@ BEGIN {
 {
     my $value1 = 'third cell value';
     my $value2 = 'fourth cell value';
-    my @cells = $ws->batchupdate_cell(
-        {row => 1, col => 1, input_value => $value1},
-        {row => 1, col => 2, input_value => $value2},
-    );
-    is scalar @cells, 2;
-    isa_ok $cells[0], 'Net::Google::Spreadsheets::Cell';
-    ok grep {$_->col == 1 && $_->row == 1 && $_->content eq $value1} @cells;
-    ok grep {$_->col == 2 && $_->row == 1 && $_->content eq $value2} @cells;
+    my $value3 = 'fifth cell value';
+    {
+        my @cells = $ws->batchupdate_cell(
+            {row => 1, col => 1, input_value => $value1},
+            {row => 1, col => 2, input_value => $value2},
+            {row => 2, col => 2, input_value => $value3},
+        );
+        is scalar @cells, 3;
+        isa_ok $cells[0], 'Net::Google::Spreadsheets::Cell';
+        ok grep {$_->col == 1 && $_->row == 1 && $_->content eq $value1} @cells;
+        ok grep {$_->col == 2 && $_->row == 1 && $_->content eq $value2} @cells;
+        ok grep {$_->col == 2 && $_->row == 2 && $_->content eq $value3} @cells;
+    }
+    {
+        my @cells = $ws->cells(
+            {
+                'min-row' => 1,
+                'max-row' => 2,
+                'min-col' => 1,
+                'max-col' => 2,
+            }
+        );
+        is scalar @cells, 3;
+        ok grep {$_->col == 1 && $_->row == 1 && $_->content eq $value1} @cells;
+        ok grep {$_->col == 2 && $_->row == 1 && $_->content eq $value2} @cells;
+        ok grep {$_->col == 2 && $_->row == 2 && $_->content eq $value3} @cells;
+    }
+    {
+        my @cells = $ws->cells( { range => 'A1:B2' } );
+        is scalar @cells, 3;
+        ok grep {$_->col == 1 && $_->row == 1 && $_->content eq $value1} @cells;
+        ok grep {$_->col == 2 && $_->row == 1 && $_->content eq $value2} @cells;
+        ok grep {$_->col == 2 && $_->row == 2 && $_->content eq $value3} @cells;
+    }
+    {
+        my @cells = $ws->cells( { range => 'A1:B2', 'return-empty' => 'true' } );
+        is scalar @cells, 4;
+        ok grep {$_->col == 1 && $_->row == 2 && $_->content eq ''} @cells;
+    }
 }
 END {
     $ws->delete;

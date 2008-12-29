@@ -15,9 +15,13 @@ BEGIN {
     $XML::Atom::DefaultVersion = 1;
 }
 
-has contents => (
+has +contents => (
     is => 'ro',
     default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full'
+);
+
+has +service => (
+    default => sub {return $_[0]}
 );
 
 has source => (
@@ -56,28 +60,34 @@ has ua => (
 
 sub spreadsheets {
     my ($self, $args) = @_;
-    my $cond = $args->{title} ? 
+    if ($args->{key}) {
+        my $atom = eval {$self->entry($self->contents.'/'.$args->{key})};
+        $atom or return;
+        return Net::Google::Spreadsheets::Spreadsheet->new(
+            atom => $atom,
+            service => $self,
+        );
+    } else {
+        my $cond = $args->{title} ? 
         {
             title => $args->{title},
             'title-exact' => 'true'
         } : {};
-    my $feed = $self->feed(
-        $self->contents,
-        $cond,
-    );
-    
-    return grep {
-        (!%$args && 1)
-        ||
-        ($args->{key} && $_->key eq $args->{key})
-        ||
-        ($args->{title} && $_->title eq $args->{title})
-    } map {
-        Net::Google::Spreadsheets::Spreadsheet->new(
-            atom => $_, 
-            service => $self
-        )
-    } $feed->entries;
+        my $feed = $self->feed(
+            $self->contents,
+            $cond,
+        );
+        return grep {
+            (!%$args && 1)
+            ||
+            ($args->{title} && $_->title eq $args->{title})
+        } map {
+            Net::Google::Spreadsheets::Spreadsheet->new(
+                atom => $_, 
+                service => $self
+            )
+        } $feed->entries;
+    }
 }
 
 sub spreadsheet {
@@ -106,7 +116,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   # find a spreadsheet by key
   my $spreadsheet = $service->spreadsheet(
     {
-        key => 'pZV-pns_sm9PtH2WowhU2Ew'
+        key => 'key_of_a_spreasheet'
     }
   );
 
@@ -135,11 +145,18 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
 
   # update cell by batch request
   $worksheet->batchupdate_cell(
-    {col => 1, row => 1, input_value => 'name'},
-    {col => 2, row => 1, input_value => 'nick'},
-    {col => 3, row => 1, input_value => 'mail'},
+    {row => 1, col => 1, input_value => 'name'},
+    {row => 1, col => 2, input_value => 'nick'},
+    {row => 1, col => 3, input_value => 'mail'},
   );
 
+  # get a cell
+  my $cell = $worksheet->cell(1,1);
+
+  # update input value of a cell
+  $cell->input_value('new value');
+
+  # add a row
   my $new_row = $worksheet->add_row(
     {
         name => 'Nobuo Danjou',
@@ -148,10 +165,12 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
     }
   );
 
+  # fetch rows
   my @rows = $worksheet->rows;
 
   my $row = $worksheet->row(1);
 
+  # update content of a row
   $row->content(
     {
         nick => 'lopnor',
@@ -178,6 +197,10 @@ Username for google. This should be full email address format like 'username@gma
 =item password
 
 Password corresponding to the username.
+
+=item source
+
+Source string to pass to Net::Google::AuthSub.
 
 =back
 
@@ -206,6 +229,14 @@ Returns first item of spreadsheets(\%condition) if available.
 Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
 
 =head1 SEE ALSO
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+
+L<Net::Google::AuthSub>
+
+L<Net::Google::Spreadsheets>
 
 =head1 LICENSE
 

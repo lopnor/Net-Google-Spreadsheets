@@ -42,7 +42,6 @@ after _update_atom => sub {
     $self->{col_count} = $self->atom->get($self->gsns, 'colCount');
 };
 
-
 sub rows {
     my ($self, $cond) = @_;
     return $self->list_contents('Net::Google::Spreadsheets::Row', $cond);
@@ -53,10 +52,16 @@ sub row {
     return ($self->rows($cond))[0];
 }
 
+sub cells {
+    my ($self, $cond) = @_;
+    my $feed = $self->service->feed($self->cellsfeed, $cond);
+    return map {Net::Google::Spreadsheets::Cell->new(container => $self, atom => $_)} $feed->entries;
+}
+
 sub cell {
-    my ($self, $row, $col) = @_;
+    my ($self, $args) = @_;
     $self->cellsfeed or return;
-    my $url = sprintf("%s/R%sC%s", $self->cellsfeed, $row, $col);
+    my $url = sprintf("%s/R%sC%s", $self->cellsfeed, $args->{row}, $args->{col});
     return Net::Google::Spreadsheets::Cell->new(
         container => $self,
         atom => $self->service->entry($url),
@@ -108,6 +113,130 @@ __END__
 Net::Google::Spreadsheets::Worksheet - Representation of worksheet.
 
 =head1 SYNOPSIS
+
+  my $service = Net::Google::Spreadsheets->new(
+    username => 'myname@gmail.com',
+    password => 'mypassword',
+  );
+
+  my $ss = $service->spreadsheet(
+    {
+        key => 'key_of_a_spreasheet'
+    }
+  );
+
+  my $worksheet = $ss->worksheet({title => 'Sheet1'});
+
+  # update cell by batch request
+  $worksheet->batchupdate_cell(
+    {col => 1, row => 1, input_value => 'name'},
+    {col => 2, row => 1, input_value => 'nick'},
+    {col => 3, row => 1, input_value => 'mail'},
+  );
+
+  # get a cell object
+  my $cell = $worksheet->cell({col => 1, row => 1});
+
+  # add a row
+  my $new_row = $worksheet->add_row(
+    {
+        name => 'Nobuo Danjou',
+        nick => 'lopnor',
+        mail => 'nobuo.danjou@gmail.com',
+    }
+  );
+
+  # get rows
+  my @rows = $worksheet->rows;
+
+  # search a row
+  my $row = $worksheet->row({sq => 'name = "Nobuo Danjou"'});
+
+=head1 METHODS
+
+=head2 rows(\%condition)
+
+Returns a list of Net::Google::Spreadsheets::Row objects. Acceptable arguments are:
+
+=over 4
+
+=item sq
+
+Structured query on the full text in the worksheet. see the URL below for detail.
+
+=item orderby
+
+Set column name to use for ordering.
+
+=item reverse
+
+Set 'true' or 'false'. The default is 'false'.
+
+=back
+
+See L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html#ListParameters> for details.
+
+=head2 row(\%condition)
+
+Returns first item of spreadsheets(\%condition) if available.
+
+=head2 cells(\%args)
+
+Returns a list of Net::Google::Spreadsheets::Cell objects. Acceptable arguments are:
+
+=over 4
+
+=item min-row
+
+=item max-row
+
+=item min-col
+
+=item max-col
+
+=item range
+
+=item return-empty
+
+=back
+
+See L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html#CellParameters> for details.
+
+=head2 cell(\%args)
+
+Returns Net::Google::Spreadsheets::Cell object. Arguments are:
+
+=over 4
+
+=item col
+
+=item row
+
+=back
+
+=head2 batchupdate_cell(@args)
+
+update multiple cells with a batch request. Pass a list of hash references containing:
+
+=over 4
+
+=item col
+
+=item row
+
+=item input_value
+
+=back
+
+=head1 SEE ALSO
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+
+L<Net::Google::AuthSub>
+
+L<Net::Google::Spreadsheets>
 
 =head1 AUTHOR
 

@@ -2,6 +2,7 @@ package Net::Google::Spreadsheets::UserAgent;
 use Moose;
 use Carp;
 use LWP::UserAgent;
+use HTTP::Headers;
 use HTTP::Request;
 use URI;
 use XML::Atom::Entry;
@@ -55,8 +56,6 @@ sub request {
     }
     my $res = $self->ua->request($req);
     unless ($res->is_success) {
-#        warn $res->request->as_string;
-#        warn $res->as_string;
         die sprintf("request for '%s' failed: %s", $uri, $res->status_line);
     }
     return $res;
@@ -116,7 +115,17 @@ __END__
 
 =head1 NAME
 
-Net::Google::Spreadsheets::UserAgent;
+Net::Google::Spreadsheets::UserAgent - UserAgent for Net::Google::Spreadsheets.
+
+=head1 SEE ALSO
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+
+L<Net::Google::AuthSub>
+
+L<Net::Google::Spreadsheets>
 
 =head1 AUTHOR
 

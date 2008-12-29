@@ -35,6 +35,16 @@ Net::Google::Spreadsheets::Row - A representation class for Google Spreadsheet r
 
 =head1 SYNOPSIS
 
+=head1 SEE ALSO
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+
+L<Net::Google::AuthSub>
+
+L<Net::Google::Spreadsheets>
+
 =head1 AUTHOR
 
 Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>

@@ -1,9 +1,6 @@
 package Net::Google::Spreadsheets::Base;
 use Moose;
 use Carp;
-use Moose::Util::TypeConstraints;
-use Net::Google::Spreadsheets::Base;
-use UNIVERSAL::require;
 
 has service => (
     isa => 'Net::Google::Spreadsheets',
@@ -43,8 +40,6 @@ has accessor => (
     is => 'ro',
 );
 
-
-
 has atom => (
     isa => 'XML::Atom::Entry',
     is => 'rw',
@@ -59,7 +54,7 @@ has atom => (
 
 has id => (
     isa => 'Str',
-    is => 'rw',
+    is => 'ro',
 );
 
 has content => (
@@ -142,14 +137,21 @@ sub delete {
 }
 
 1;
-
 __END__
 
 =head1 NAME
 
 Net::Google::Spreadsheets::Base - Base class of Net::Google::Spreadsheets::*.
 
-=head1 SYNOPSIS
+=head1 SEE ALSO
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+
+L<Net::Google::AuthSub>
+
+L<Net::Google::Spreadsheets>
 
 =head1 AUTHOR
 

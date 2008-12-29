@@ -21,7 +21,7 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 8;
+    plan tests => 11;
     $ws = $ss->add_worksheet;
 }
 {
@@ -49,6 +49,13 @@ BEGIN {
     is scalar $ws->rows, 1;
     ok $row->delete;
     is scalar $ws->rows, 0;
+}
+{
+    $ws->add_row( { name => $_ } ) for qw(danjou lopnor soffritto);
+    is scalar $ws->rows, 3;
+    my $row = $ws->row({sq => 'name = "lopnor"'});
+    isa_ok $row, 'Net::Google::Spreadsheets::Row';
+    is_deeply $row->content, {name => 'lopnor', nick => '', mail => ''};
 }
 END {
     $ws->delete;
