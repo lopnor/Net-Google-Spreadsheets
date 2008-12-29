@@ -183,7 +183,7 @@ Password corresponding to the username.
 
 =head2 spreadsheets(\%condition)
 
-returns list of Net::Google::Spreadsheets::Spreadsheet objects. Acceptable arugments are:
+returns list of Net::Google::Spreadsheets::Spreadsheet objects. Acceptable arguments are:
 
 =over 4
 

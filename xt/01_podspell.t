@@ -9,3 +9,5 @@ Nobuo Danjou
 nobuo.danjou@gmail.com
 Net::Google::Spreadsheets
 API
+username
+google
