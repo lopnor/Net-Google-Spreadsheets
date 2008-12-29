@@ -11,3 +11,5 @@ Net::Google::Spreadsheets
 API
 username
 google
+orderby
+UserAgent
