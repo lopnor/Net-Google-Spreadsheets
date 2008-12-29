@@ -57,7 +57,7 @@ sub request {
     unless ($res->is_success) {
 #        warn $res->request->as_string;
 #        warn $res->as_string;
-        croak "request failed: ",$res->code;
+        die sprintf("request for '%s' failed: %s", $uri, $res->status_line);
     }
     return $res;
 }

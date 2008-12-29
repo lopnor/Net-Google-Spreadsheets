@@ -21,20 +21,31 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 27;
+    plan tests => 34;
 }
 {
     my @worksheets = $ss->worksheets;
     ok scalar @worksheets;
 }
 {
-    my $title = 'new worksheet';
-    my $ws = $ss->add_worksheet({title => $title});
+    my $args = {
+        title => 'new worksheet',
+        row_count => 10,
+        col_count => 3,
+    };
+    my $ws = $ss->add_worksheet($args);
     isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
-    is $ws->title, $title;
-    my $ws2 = $ss->worksheet({title => $title});
+    is $ws->title, $args->{title};
+    is $ws->row_count, $args->{row_count};
+    is $ws->col_count, $args->{col_count};
+    my $ws2 = $ss->worksheet({title => $args->{title}});
     isa_ok $ws2, 'Net::Google::Spreadsheets::Worksheet';
-    is $ws2->title, $title;
+    is $ws2->title, $args->{title};
+    is $ws2->row_count, $args->{row_count};
+    is $ws2->col_count, $args->{col_count};
+    ok $ws2->delete;
+    ok ! grep {$_->id eq $ws->id} $ss->worksheets;
+    ok ! grep {$_->id eq $ws2->id} $ss->worksheets;
 }
 {
     my ($ws) = $ss->worksheets;
@@ -42,7 +53,7 @@ BEGIN {
 }
 {
     my $before = scalar $ss->worksheets;
-    my $ws = $ss->add_worksheet;
+    my $ws = $ss->add_worksheet({title => 'new_worksheet'});
     isa_ok $ws, 'Net::Google::Spreadsheets::Worksheet';
     is scalar $ss->worksheets, $before + 1;
     ok grep {$_->id eq $ws->id} $ss->worksheets;
@@ -71,6 +82,7 @@ BEGIN {
     my $before = scalar $ss->worksheets;
     my $ws = ($ss->worksheets)[-1];
     ok $ws->delete;
-    is scalar $ss->worksheets, $before - 1;
-    ok ! grep {$_ == $ws} $ss->worksheets;
+    my @after = $ss->worksheets;
+    is scalar @after, $before - 1;
+    ok ! grep {$_->id eq $ws->id} @after;
 }

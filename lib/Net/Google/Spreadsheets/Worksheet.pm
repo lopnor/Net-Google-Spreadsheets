@@ -48,6 +48,11 @@ sub rows {
     return $self->list_contents('Net::Google::Spreadsheets::Row', $cond);
 }
 
+sub row {
+    my ($self, $cond) = @_;
+    return ($self->rows($cond))[0];
+}
+
 sub cell {
     my ($self, $row, $col) = @_;
     $self->cellsfeed or return;

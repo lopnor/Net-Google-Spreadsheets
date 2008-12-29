@@ -21,6 +21,7 @@ lib/Net/Google/Spreadsheets/Base.pm
 lib/Net/Google/Spreadsheets/Cell.pm
 lib/Net/Google/Spreadsheets/Row.pm
 lib/Net/Google/Spreadsheets/Spreadsheet.pm
+lib/Net/Google/Spreadsheets/UserAgent.pm
 lib/Net/Google/Spreadsheets/Worksheet.pm
 Makefile.PL
 MANIFEST			This list of files

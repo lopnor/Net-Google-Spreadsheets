@@ -1,5 +1,6 @@
 package Net::Google::Spreadsheets;
 use Moose;
+use 5.008;
 
 extends 'Net::Google::Spreadsheets::Base';
 
@@ -62,7 +63,7 @@ sub spreadsheets {
         } : {};
     my $feed = $self->feed(
         $self->contents,
-        $cond
+        $cond,
     );
     
     return grep {
@@ -103,17 +104,47 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   my @spreadsheets = $service->spreadsheets();
 
   # find a spreadsheet by key
-  my $spreadsheet = $service->spreadsheet({key => 'pZV-pns_sm9PtH2WowhU2Ew'});
+  my $spreadsheet = $service->spreadsheet(
+    {
+        key => 'pZV-pns_sm9PtH2WowhU2Ew'
+    }
+  );
 
   # find a spreadsheet by title
-  my $spreadsheet = $service->spreadsheet({title => 'list for new year cards'});
-  my $worksheet = $spreadsheet->worksheet(1);
-
-  my @fields = $worksheet->fields();
-
-  my $inserted_row = $worksheet->insert(
+  my $spreadsheet_by_title = $service->spreadsheet(
     {
-        name => 'danjou',
+        title => 'list for new year cards'
+    }
+  );
+
+  # find a worksheet by title
+  my $worksheet = $spreadsheet->worksheet(
+    {
+        title => 'Sheet1'
+    }
+  );
+
+  # create a worksheet
+  my $new_worksheet = $spreadsheet->add_worksheet(
+    {
+        title => 'Sheet2',
+        row_count => 100,
+        col_count => 3,
+    }
+  );
+
+  # update cell by batch request
+  $worksheet->batchupdate_cell(
+    {col => 1, row => 1, input_value => 'name'},
+    {col => 2, row => 1, input_value => 'nick'},
+    {col => 3, row => 1, input_value => 'mail'},
+  );
+
+  my $new_row = $worksheet->add_row(
+    {
+        name => 'Nobuo Danjou',
+        nick => 'lopnor',
+        mail => 'nobuo.danjou@gmail.com',
     }
   );
 
@@ -121,7 +152,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
 
   my $row = $worksheet->row(1);
 
-  $row->update(
+  $row->content(
     {
         nick => 'lopnor',
         mail => 'nobuo.danjou@gmail.com',
@@ -131,6 +162,44 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
 =head1 DESCRIPTION
 
 Net::Google::Spreadsheets is a Perl module for using Google Spreadsheets API.
+
+=head1 METHODS
+
+=head2 new
+
+Creates Google Spreadsheet API client. It takes arguments below:
+
+=over 4
+
+=item username
+
+Username for google. This should be full email address format like 'username@gmail.com'.
+
+=item password
+
+Password corresponding to the username.
+
+=back
+
+=head2 spreadsheets(\%condition)
+
+returns list of Net::Google::Spreadsheets::Spreadsheet objects. Acceptable arugments are:
+
+=over 4
+
+=item title
+
+title of the spreadsheet.
+
+=item title-exact
+
+whether title search should match exactly or not.
+
+=back
+
+=head2 spreadsheet(\%condition)
+
+Returns first item of spreadsheets(\%condition) if available.
 
 =head1 AUTHOR
 
