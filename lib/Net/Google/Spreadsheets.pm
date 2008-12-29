@@ -151,7 +151,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   );
 
   # get a cell
-  my $cell = $worksheet->cell(1,1);
+  my $cell = $worksheet->cell({col => 1, row => 1});
 
   # update input value of a cell
   $cell->input_value('new value');
@@ -168,7 +168,8 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   # fetch rows
   my @rows = $worksheet->rows;
 
-  my $row = $worksheet->row(1);
+  # search a row
+  my $row = $worksheet->row({sq => 'name = "Nobuo Danjou"'});
 
   # update content of a row
   $row->content(
