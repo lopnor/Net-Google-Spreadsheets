@@ -2,6 +2,7 @@ use inc::Module::Install;
 name 'Net-Google-Spreadsheets';
 all_from 'lib/Net/Google/Spreadsheets.pm';
 
+requires 'Carp';
 requires 'XML::Atom';
 requires 'Net::Google::AuthSub';
 requires 'LWP::UserAgent';
