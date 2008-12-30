@@ -56,6 +56,45 @@ Net::Google::Spreadsheets::Cell - A representation class for Google Spreadsheet 
 
 =head1 SYNOPSIS
 
+  use Net::Google::Spreadsheets;
+
+  my $service = Net::Google::Spreadsheets->new(
+    username => 'myname@gmail.com',
+    password => 'mypassword',
+  );
+
+  # get a cell
+  my $cell = $service->spreadsheet(
+    {
+        title => 'list for new year cards',
+    }
+  )->worksheet(
+    {
+        title => 'Sheet1',
+    }
+  )->cell(
+    {
+        col => 1,
+        row => 1,
+    }
+  );
+
+  # update a cell
+  $cell->input_value('new value');
+
+  # get the content of a cell
+  my $value = $cell->content;
+
+=head1 ATTRIBUTES
+
+=head2 input_value
+
+Rewritable attribute. You can set formula like '=A1+B1' or so.
+
+=head2 content
+
+Read only attribute. You can get the result of formula.
+
 =head1 SEE ALSO
 
 L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>

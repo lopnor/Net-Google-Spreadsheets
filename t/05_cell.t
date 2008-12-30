@@ -21,7 +21,7 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 22;
+    plan tests => 25;
     $ws = $ss->add_worksheet;
 }
 {
@@ -85,6 +85,17 @@ BEGIN {
         ok grep {$_->col == 1 && $_->row == 2 && $_->content eq ''} @cells;
     }
 }
+{
+    my @cells = $ws->batchupdate_cell(
+        {row => 1, col => 1, input_value => 100},
+        {row => 1, col => 2, input_value => 200},
+        {row => 1, col => 3, input_value => '=A1+B1'},
+    );
+    is scalar @cells, 3;
+    isa_ok $cells[0], 'Net::Google::Spreadsheets::Cell';
+    my $result = $ws->cell({ row => 1, col => 3});
+    is $result->content, 300;
+}
 END {
-    $ws->delete;
+#    $ws->delete;
 }

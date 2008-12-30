@@ -219,6 +219,11 @@ title of the spreadsheet.
 
 whether title search should match exactly or not.
 
+=item key
+
+key for the spreadsheet. You can get the key via the URL for the spreadsheet.
+http://spreadsheets.google.com/ccc?key=key
+
 =back
 
 =head2 spreadsheet(\%condition)
@@ -237,7 +242,13 @@ L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
 
 L<Net::Google::AuthSub>
 
-L<Net::Google::Spreadsheets>
+L<Net::Google::Spreadsheets::Spreadsheet>
+
+L<Net::Google::Spreadsheets::Worksheet>
+
+L<Net::Google::Spreadsheets::Cell>
+
+L<Net::Google::Spreadsheets::Row>
 
 =head1 LICENSE
 
