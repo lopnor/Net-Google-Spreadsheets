@@ -81,7 +81,7 @@ sub batchupdate_cell {
     }
     my $res_feed = $self->service->post($self->cellsfeed."/batch", $feed, {'If-Match' => '*'});
     $self->sync;
-    return map { 
+    return map {
         Net::Google::Spreadsheets::Cell->new(
             atom => $_,
             container => $self,
@@ -115,7 +115,7 @@ Net::Google::Spreadsheets::Worksheet - Representation of worksheet.
 =head1 SYNOPSIS
 
   my $service = Net::Google::Spreadsheets->new(
-    username => 'myname@gmail.com',
+    username => 'mygoogleaccount@example.com',
     password => 'mypassword',
   );
 

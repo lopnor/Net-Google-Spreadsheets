@@ -68,7 +68,7 @@ sub spreadsheets {
             service => $self,
         );
     } else {
-        my $cond = $args->{title} ? 
+        my $cond = $args->{title} ?
         {
             title => $args->{title},
             'title-exact' => 'true'
@@ -83,7 +83,7 @@ sub spreadsheets {
             ($args->{title} && $_->title eq $args->{title})
         } map {
             Net::Google::Spreadsheets::Spreadsheet->new(
-                atom => $_, 
+                atom => $_,
                 service => $self
             )
         } $feed->entries;
@@ -107,10 +107,10 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   use Net::Google::Spreadsheets;
 
   my $service = Net::Google::Spreadsheets->new(
-    username => 'myname@gmail.com', 
+    username => 'mygoogleaccount@example.com',
     password => 'mypassword'
   );
-  
+
   my @spreadsheets = $service->spreadsheets();
 
   # find a spreadsheet by key
@@ -193,7 +193,7 @@ Creates Google Spreadsheet API client. It takes arguments below:
 
 =item username
 
-Username for google. This should be full email address format like 'username@gmail.com'.
+Username for Google. This should be full email address format like 'mygoogleaccount@example.com'.
 
 =item password
 

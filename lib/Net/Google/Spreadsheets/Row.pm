@@ -38,7 +38,7 @@ Net::Google::Spreadsheets::Row - A representation class for Google Spreadsheet r
   use Net::Google::Spreadsheets;
 
   my $service = Net::Google::Spreadsheets->new(
-    username => 'myname@gmail.com',
+    username => 'mygoogleaccount@example.com',
     password => 'mypassword',
   );
 

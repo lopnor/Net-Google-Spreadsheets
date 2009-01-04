@@ -31,7 +31,7 @@ after _update_atom => sub {
 around entry => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    $entry->set($self->gsns, 'cell', '', 
+    $entry->set($self->gsns, 'cell', '',
         {
             row => $self->row,
             col => $self->col,
@@ -59,7 +59,7 @@ Net::Google::Spreadsheets::Cell - A representation class for Google Spreadsheet 
   use Net::Google::Spreadsheets;
 
   my $service = Net::Google::Spreadsheets->new(
-    username => 'myname@gmail.com',
+    username => 'mygoogleaccount@example.com',
     password => 'mypassword',
   );
 
