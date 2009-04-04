@@ -13,3 +13,7 @@ username
 google
 orderby
 UserAgent
+col
+min
+sq
+rewritable

@@ -9,7 +9,7 @@ use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::UserAgent;
 use Net::Google::Spreadsheets::Spreadsheet;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 BEGIN {
     $XML::Atom::DefaultVersion = 1;
@@ -37,26 +37,27 @@ has password => ( isa => 'Str', is => 'ro', required => 1 );
 has ua => (
     isa => 'Net::Google::Spreadsheets::UserAgent',
     is => 'ro',
-    required => 1,
-    lazy => 1,
-    default => sub {
-        my ($self) = @_;
-        my $authsub = Net::Google::AuthSub->new(
-            service => 'wise',
-            source => $self->source,
-        );
-        my $res = $authsub->login(
-            $self->username,
-            $self->password,
-        );
-        $res->is_success or return;
-        Net::Google::Spreadsheets::UserAgent->new(
-            source => $self->source,
-            auth => $res->auth,
-        );
-    },
     handles => [qw(request feed entry post put)],
 );
+
+sub BUILD {
+    my $self = shift;
+    my $authsub = Net::Google::AuthSub->new(
+        service => 'wise',
+        source => $self->source,
+    );
+    my $res = $authsub->login(
+        $self->username,
+        $self->password,
+    );
+    unless ($res && $res->is_success) {
+        croak 'Net::Google::AuthSub login failed';
+    } 
+    $self->{ua} = Net::Google::Spreadsheets::UserAgent->new(
+        source => $self->source,
+        auth => $res->auth,
+    );
+}
 
 sub spreadsheets {
     my ($self, $args) = @_;

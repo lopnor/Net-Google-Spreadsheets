@@ -1,4 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.02    Sat Apr 04 22:32:40 2009
+        - Crypt::SSLeay dependency
+        - Better error message on login failure
+
 0.01    Tue Dec 16 23:52:25 2008
         - original version

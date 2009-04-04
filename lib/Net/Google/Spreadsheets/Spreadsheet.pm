@@ -38,7 +38,7 @@ sub worksheets {
 
 sub add_worksheet {
     my ($self, $args) = @_;
-    my $entry = Net::Google::Spreadsheets::Worksheet->new($args)->entry;
+    my $entry = Net::Google::Spreadsheets::Worksheet->new($args || {})->entry;
     my $atom = $self->service->post($self->content, $entry);
     $self->sync;
     return Net::Google::Spreadsheets::Worksheet->new(
