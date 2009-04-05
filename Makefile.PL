@@ -8,7 +8,7 @@ requires 'Net::Google::AuthSub';
 requires 'Crypt::SSLeay';
 requires 'LWP::UserAgent';
 requires 'URI';
-requires 'Moose';
+requires 'Moose' => 0.34;
 requires 'Path::Class';
 
 tests 't/*.t';
