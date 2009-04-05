@@ -17,3 +17,4 @@ col
 min
 sq
 rewritable
+param

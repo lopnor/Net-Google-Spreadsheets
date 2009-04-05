@@ -1,5 +1,6 @@
 use strict;
 use Test::More;
+use utf8;
 
 use Net::Google::Spreadsheets;
 
@@ -21,7 +22,7 @@ BEGIN {
     my $title = 'test for Net::Google::Spreadsheets';
     my $ss = $service->spreadsheet({title => $title});
     plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 11;
+    plan tests => 14;
     $ws = $ss->add_worksheet;
 }
 {
@@ -40,9 +41,19 @@ BEGIN {
     my $row = $ws->add_row($value);
     isa_ok $row, 'Net::Google::Spreadsheets::Row';
     is_deeply $row->content, $value;
+
+    is_deeply $row->param, $value;
+    is $row->param('name'), $value->{name};
+    my $newval = {name => '檀上伸郎'};
+    is_deeply $row->param($newval), {
+        %$value,
+        %$newval,
+    };
+
     my $value2 = {
         name => 'Kazuhiro Osawa',
         nick => 'yappo',
+        mail => '',
     };
     $row->content($value2);
     is_deeply $row->content, $value2;

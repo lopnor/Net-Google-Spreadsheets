@@ -7,7 +7,9 @@ has +content => (
     isa => 'HashRef',
     is => 'rw',
     default => sub { +{} },
-    trigger => sub {$_[0]->update},
+    trigger => sub {
+        $_[0]->update
+    },
 );
 
 after _update_atom => sub {
@@ -25,6 +27,21 @@ around entry => sub {
     }
     return $entry;
 };
+
+sub param {
+    my ($self, $arg) = @_;
+    return $self->content unless $arg;
+    if (ref $arg && (ref $arg eq 'HASH')) {
+        return $self->content(
+            {
+                %{$self->content},
+                %$arg,
+            }
+        );
+    } else {
+        return $self->content->{$arg};
+    }
+}
 
 1;
 __END__
@@ -71,6 +88,24 @@ Net::Google::Spreadsheets::Row - A representation class for Google Spreadsheet r
         name => 'Nobuo Danjou',
     }
   );
+
+  # get and set values partially
+  
+  my $value = $row->param('name');
+  # returns 'Nobuo Danjou'
+  
+  my $newval = $row->param({address => 'elsewhere'});
+  # updates address (and keeps other fields) and returns new row value (with all fields)
+
+  my $hashref = $row->param;
+  # same as $row->content;
+
+=head1 METHODS
+
+=head2 param
+
+sets and gets content value.
+
 
 =head1 ATTRIBUTES
 
