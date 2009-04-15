@@ -9,7 +9,7 @@ use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::UserAgent;
 use Net::Google::Spreadsheets::Spreadsheet;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 BEGIN {
     $XML::Atom::DefaultVersion = 1;
@@ -149,6 +149,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
     {row => 1, col => 1, input_value => 'name'},
     {row => 1, col => 2, input_value => 'nick'},
     {row => 1, col => 3, input_value => 'mail'},
+    {row => 1, col => 4, input_value => 'age'},
   );
 
   # get a cell
@@ -163,11 +164,16 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
         name => 'Nobuo Danjou',
         nick => 'lopnor',
         mail => 'nobuo.danjou@gmail.com',
+        age  => '33',
     }
   );
 
   # fetch rows
   my @rows = $worksheet->rows;
+
+  # or fetch rows with query
+  
+  @rows = $worksheet->rows({sq => 'age > 20'});
 
   # search a row
   my $row = $worksheet->row({sq => 'name = "Nobuo Danjou"'});

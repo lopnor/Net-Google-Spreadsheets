@@ -132,6 +132,7 @@ Net::Google::Spreadsheets::Worksheet - Representation of worksheet.
     {col => 1, row => 1, input_value => 'name'},
     {col => 2, row => 1, input_value => 'nick'},
     {col => 3, row => 1, input_value => 'mail'},
+    {col => 4, row => 1, input_value => 'age'},
   );
 
   # get a cell object
@@ -143,11 +144,15 @@ Net::Google::Spreadsheets::Worksheet - Representation of worksheet.
         name => 'Nobuo Danjou',
         nick => 'lopnor',
         mail => 'nobuo.danjou@gmail.com',
+        age  => '33',
     }
   );
 
   # get rows
   my @rows = $worksheet->rows;
+
+  # search rows
+  @rows = $worksheet->rows({sq => 'age > 20'});
 
   # search a row
   my $row = $worksheet->row({sq => 'name = "Nobuo Danjou"'});

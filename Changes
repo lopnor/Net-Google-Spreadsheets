@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.04    Wed Apr 15 09:22:59 2009
+        - Updated POD (thanks to Mr. Grue)
+
 0.03    Sun Apr 05 13:22:21 2009
         - param method for Net::Google::Spreadsheets::Row (thanks to Mr. Grue)
 
