@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.05_01 Sun Aug 02 21:44:50 2009
+        - Fix attribute problem (thanks to Eric Celeste)
+
 0.04    Wed Apr 15 09:22:59 2009
         - Updated POD (thanks to Mr. Grue)
 

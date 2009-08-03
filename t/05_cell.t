@@ -61,8 +61,6 @@ BEGIN {
     {
         my @cells = $ws->cells(
             {
-                'min-row' => 1,
-                'max-row' => 2,
                 'min-col' => 1,
                 'max-col' => 2,
             }

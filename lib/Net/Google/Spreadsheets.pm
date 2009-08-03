@@ -9,7 +9,7 @@ use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::UserAgent;
 use Net::Google::Spreadsheets::Spreadsheet;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05_01';
 
 BEGIN {
     $XML::Atom::DefaultVersion = 1;
@@ -21,7 +21,8 @@ has +contents => (
 );
 
 has +service => (
-    default => sub {return $_[0]}
+    is => 'ro',
+    default => sub {return $_[0]},
 );
 
 has source => (
