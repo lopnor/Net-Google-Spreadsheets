@@ -1,5 +1,6 @@
 package Net::Google::Spreadsheets::Cell;
 use Moose;
+use namespace::clean -except => 'meta';
 
 extends 'Net::Google::Spreadsheets::Base';
 
@@ -46,6 +47,8 @@ around entry => sub {
     $entry->id($self->id);
     return $entry;
 };
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 __END__

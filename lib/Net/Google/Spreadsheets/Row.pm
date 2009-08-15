@@ -1,5 +1,6 @@
 package Net::Google::Spreadsheets::Row;
 use Moose;
+use namespace::clean -except => 'meta';
 
 extends 'Net::Google::Spreadsheets::Base';
 
@@ -27,6 +28,8 @@ around entry => sub {
     }
     return $entry;
 };
+
+__PACKAGE__->meta->make_immutable;
 
 sub param {
     my ($self, $arg) = @_;

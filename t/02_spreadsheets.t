@@ -1,7 +1,5 @@
-use t::Util title => 'test for Net::Google::Spreadsheets';
+use t::Util;
 use Test::More;
-
-use Digest::MD5 qw(md5_hex);
 
 ok my $service = service;
 
@@ -34,7 +32,7 @@ ok my $service = service;
     my @existing = map {$_->title} $service->spreadsheets;
     my $title;
     while (1) {
-        $title = md5_hex(time, $$, rand, @existing);
+        $title = 'spreadsheet created at '.scalar localtime;
         grep {$_ eq $title} @existing or last; 
     }
     

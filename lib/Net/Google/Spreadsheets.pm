@@ -1,5 +1,6 @@
 package Net::Google::Spreadsheets;
 use Moose;
+use namespace::clean -except => 'meta';
 use 5.008001;
 
 extends 'Net::Google::Spreadsheets::Base';
@@ -59,6 +60,8 @@ sub BUILD {
         auth => $res->auth,
     );
 }
+
+__PACKAGE__->meta->make_immutable;
 
 sub spreadsheets {
     my ($self, $args) = @_;

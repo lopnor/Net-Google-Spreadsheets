@@ -1,4 +1,4 @@
-use t::Util title => 'test for Net::Google::Spreadsheets';
+use t::Util;
 use Test::More;
 
 ok my $spreadsheet = spreadsheet, 'getting spreadsheet';

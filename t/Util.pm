@@ -28,16 +28,17 @@ sub import {
     warnings->import;
     utf8->import;
 
-    check_env(qw(TEST_NET_GOOGLE_SPREADSHEETS)) or exit;
+    check_env(qw(
+        TEST_NET_GOOGLE_SPREADSHEETS 
+        TEST_NET_GOOGLE_SPREADSHEETS_TITLE
+    )) or exit;
     {
         no warnings;
         check_use(qw(Config::Pit)) or exit;
     }
     check_config(PIT_KEY) or exit;
-    if (my $title = $args{title}) {
-        $SPREADSHEET_TITLE = $title;
-        check_spreadsheet_exists({title => $title}) or exit;
-    }
+    $SPREADSHEET_TITLE = $ENV{TEST_NET_GOOGLE_SPREADSHEETS_TITLE};
+    check_spreadsheet_exists({title => $SPREADSHEET_TITLE}) or exit;
     {
         no strict 'refs';
         for (qw(config service spreadsheet)) {

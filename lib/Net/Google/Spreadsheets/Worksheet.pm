@@ -1,9 +1,11 @@
 package Net::Google::Spreadsheets::Worksheet;
 use Moose;
-use Net::Google::Spreadsheets::Row;
-use Net::Google::Spreadsheets::Cell;
+use namespace::clean -except => 'meta';
 
 extends 'Net::Google::Spreadsheets::Base';
+
+use Net::Google::Spreadsheets::Row;
+use Net::Google::Spreadsheets::Cell;
 
 has row_count => (
     isa => 'Int',
@@ -41,6 +43,8 @@ after _update_atom => sub {
     $self->{row_count} = $self->atom->get($self->gsns, 'rowCount');
     $self->{col_count} = $self->atom->get($self->gsns, 'colCount');
 };
+
+__PACKAGE__->meta->make_immutable;
 
 sub rows {
     my ($self, $cond) = @_;

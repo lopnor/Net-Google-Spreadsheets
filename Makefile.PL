@@ -14,8 +14,10 @@ requires 'Path::Class';
 tests 't/*.t';
 author_tests 'xt';
 
-build_requires 'Test::More';
+build_requires 'Test::More' => '0.88';
 build_requires 'Test::Exception';
+build_requires 'Test::MockModule';
+build_requires 'Test::MockObject';
 use_test_base;
 auto_include;
 WriteAll;

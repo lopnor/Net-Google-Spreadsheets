@@ -1,9 +1,11 @@
 package Net::Google::Spreadsheets::Spreadsheet;
 use Moose;
-use Net::Google::Spreadsheets::Worksheet;
-use Path::Class;
+use namespace::clean -except => 'meta';
 
 extends 'Net::Google::Spreadsheets::Base';
+
+use Net::Google::Spreadsheets::Worksheet;
+use Path::Class;
 
 has +title => (
     is => 'ro',
@@ -25,6 +27,8 @@ after _update_atom => sub {
     my ($self) = @_;
     $self->{content} = $self->atom->content->elem->getAttribute('src');
 };
+
+__PACKAGE__->meta->make_immutable;
 
 sub worksheet {
     my ($self, $cond) = @_;

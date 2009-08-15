@@ -1,5 +1,6 @@
 package Net::Google::Spreadsheets::Base;
 use Moose;
+use namespace::clean -except => 'meta';
 use Carp;
 
 has service => (
@@ -17,13 +18,10 @@ my %ns = (
     batch => 'http://schemas.google.com/gdata/batch',
 );
 
+my $pkg = __PACKAGE__;
 while (my ($prefix, $uri) = each %ns) {
-    has $prefix.'ns' => (
-        isa => 'XML::Atom::Namespace',
-        is => 'ro',
-        required => 1,
-        default => sub {XML::Atom::Namespace->new($prefix, $uri)},
-    );
+    no strict 'refs';
+    *{"$pkg\::${prefix}ns"} = sub {XML::Atom::Namespace->new($prefix, $uri)};
 }
 
 my %rel2label = (
@@ -78,6 +76,8 @@ has container => (
     isa => 'Maybe[Net::Google::Spreadsheets::Base]',
     is => 'ro',
 );
+
+__PACKAGE__->meta->make_immutable;
 
 sub _update_atom {
     my ($self) = @_;
