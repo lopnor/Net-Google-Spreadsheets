@@ -29,7 +29,6 @@ sub import {
     utf8->import;
 
     check_env(qw(
-        TEST_NET_GOOGLE_SPREADSHEETS 
         TEST_NET_GOOGLE_SPREADSHEETS_TITLE
     )) or exit;
     {
