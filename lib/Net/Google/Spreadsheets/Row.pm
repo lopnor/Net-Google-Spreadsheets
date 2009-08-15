@@ -8,9 +8,7 @@ has +content => (
     isa => 'HashRef',
     is => 'rw',
     default => sub { +{} },
-    trigger => sub {
-        $_[0]->update
-    },
+    trigger => sub { $_[0]->update },
 );
 
 after _update_atom => sub {
@@ -109,6 +107,26 @@ Net::Google::Spreadsheets::Row - A representation class for Google Spreadsheet r
 
 sets and gets content value.
 
+=head1 CAVEATS
+
+Space characters in hash key of rows will be removed when you access rows. See below.
+
+  my $ws = Net::Google::Spreadsheets->new(
+    username => 'me@gmail.com', 
+    password => 'foobar'
+  )->spreadsheet({titile => 'sample'})->worksheet(1);
+  $ws->batchupdate_cell(
+    {col => 1,row => 1, input_value => 'name'},
+    {col => 2,row => 1, input_value => 'mail address'},
+  ); 
+  $ws->add_row(
+    {
+        name => 'my name',
+        mailaddress => 'me@gmail.com',
+  #      above passes, below fails.
+  #      'mail address' => 'me@gmail.com',
+    }
+  );
 
 =head1 ATTRIBUTES
 

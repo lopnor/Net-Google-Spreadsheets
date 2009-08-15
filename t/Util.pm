@@ -29,14 +29,14 @@ sub import {
     utf8->import;
 
     check_env(qw(
-        TEST_NET_GOOGLE_SPREADSHEETS_TITLE
+        SPREADSHEETS_TITLE
     )) or exit;
     {
         no warnings;
         check_use(qw(Config::Pit)) or exit;
     }
     check_config(PIT_KEY) or exit;
-    $SPREADSHEET_TITLE = $ENV{TEST_NET_GOOGLE_SPREADSHEETS_TITLE};
+    $SPREADSHEET_TITLE = $ENV{SPREADSHEETS_TITLE};
     check_spreadsheet_exists({title => $SPREADSHEET_TITLE}) or exit;
     {
         no strict 'refs';

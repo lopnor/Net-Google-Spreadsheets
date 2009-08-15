@@ -7,16 +7,16 @@ ok my $ws = spreadsheet->add_worksheet, 'add worksheet';
     is scalar $ws->rows, 0;
     $ws->batchupdate_cell(
         {col => 1, row => 1, input_value => 'name'},
-        {col => 2, row => 1, input_value => 'mail'},
+        {col => 2, row => 1, input_value => 'mail address'},
         {col => 3, row => 1, input_value => 'nick'},
     );
     is scalar $ws->rows, 0;
     my $value = {
         name => 'Nobuo Danjou',
-        mail => 'nobuo.danjou@gmail.com',
+        mailaddress => 'nobuo.danjou@gmail.com',
         nick => 'lopnor',
     };
-    my $row = $ws->add_row($value);
+    ok my $row = $ws->add_row($value);
     isa_ok $row, 'Net::Google::Spreadsheets::Row';
     is_deeply $row->content, $value;
 
@@ -31,7 +31,7 @@ ok my $ws = spreadsheet->add_worksheet, 'add worksheet';
     my $value2 = {
         name => 'Kazuhiro Osawa',
         nick => 'yappo',
-        mail => '',
+        mailaddress => '',
     };
     $row->content($value2);
     is_deeply $row->content, $value2;
@@ -45,7 +45,7 @@ ok my $ws = spreadsheet->add_worksheet, 'add worksheet';
     is scalar $ws->rows, 3;
     my $row = $ws->row({sq => 'name = "lopnor"'});
     isa_ok $row, 'Net::Google::Spreadsheets::Row';
-    is_deeply $row->content, {name => 'lopnor', nick => '', mail => ''};
+    is_deeply $row->content, {name => 'lopnor', nick => '', mailaddress => ''};
 }
 
 ok $ws->delete, 'delete worksheet';

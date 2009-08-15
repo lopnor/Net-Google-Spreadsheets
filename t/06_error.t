@@ -28,8 +28,11 @@ throws_ok {
     is $service->ua->auth, 'foobar';
     my $ua = Test::MockModule->new('LWP::UserAgent');
     {
-        $ua->mock('request' => sub {return HTTP::Response->new(302)});
+        $ua->mock('request' => sub {return HTTP::Response->parse(<<'END')});
+302 Found
+Location: http://www.google.com/
 
+END
         throws_ok {
             $service->spreadsheets;
         } qr{302 Found};

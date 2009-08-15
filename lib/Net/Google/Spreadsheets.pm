@@ -241,6 +241,44 @@ http://spreadsheets.google.com/ccc?key=key
 
 Returns first item of spreadsheets(\%condition) if available.
 
+=head1 TESTING
+
+To test this module, you have to prepare as below.
+
+=over 4
+
+=item create a spreadsheet by hand
+
+Go to L<http://docs.google.com> and create a spreadsheet.
+
+=item set SPREADSHEET_TITLE environment variable
+
+  export SPREADSHEET_TITLE='my test spreadsheet'
+
+or so.
+
+=item set username and password for google.com via Config::Pit
+
+install Config::Pit and type 
+
+  ppit set google.com
+
+then some editor comes up and type your username and password like
+
+  ---
+  username: myname@gmail.com
+  password: foobarbaz
+
+=item run tests
+
+as always,
+
+  perl Makefile.PL
+  make
+  make test
+
+=back
+
 =head1 AUTHOR
 
 Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
