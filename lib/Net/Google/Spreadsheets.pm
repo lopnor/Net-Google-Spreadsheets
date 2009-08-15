@@ -1,6 +1,6 @@
 package Net::Google::Spreadsheets;
 use Moose;
-use 5.008;
+use 5.008001;
 
 extends 'Net::Google::Spreadsheets::Base';
 
@@ -9,7 +9,7 @@ use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::UserAgent;
 use Net::Google::Spreadsheets::Spreadsheet;
 
-our $VERSION = '0.05_01';
+our $VERSION = '0.05';
 
 BEGIN {
     $XML::Atom::DefaultVersion = 1;
