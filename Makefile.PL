@@ -17,6 +17,5 @@ author_tests 'xt';
 build_requires 'Test::More' => 0.88;
 build_requires 'Test::Exception';
 build_requires 'Digest::MD5';
-use_test_base;
 auto_include;
 WriteAll;
