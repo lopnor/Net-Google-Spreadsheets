@@ -31,11 +31,11 @@ README
 t/00_compile.t
 t/01_instanciate.t
 t/02_spreadsheets.t
-t/03_spreadsheet.t
-t/04_worksheet.t
-t/05_cell.t
-t/06_rows.t
-t/07_error.t
+t/03_worksheet.t
+t/04_cell.t
+t/05_rows.t
+t/06_error.t
+t/Util.pm
 xt/01_podspell.t
 xt/02_perlcritic.t
 xt/03_pod.t

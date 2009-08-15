@@ -1,10 +1,7 @@
-use lib 't/lib';
-use Test::GoogleSpreadsheets::Util;
-use Test::FITesque;
+use t::Util;
+use Test::More;
 
-run_tests {
-    test {
-        ['Test::GoogleSpreadsheets::Fixture'],
-        ['check_instance'],
-    }
-};
+ok my $service = service();
+isa_ok $service, 'Net::Google::Spreadsheets';
+
+done_testing;

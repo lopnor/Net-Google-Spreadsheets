@@ -1,9 +1,17 @@
-package Test::GoogleSpreadsheets::Util;
+package t::Util;
 use strict;
 use warnings;
 use utf8;
 use Test::More;
 use Net::Google::Spreadsheets;
+
+sub PIT_KEY { 'google.com' }
+
+our $SPREADSHEET_TITLE;
+my (
+    $config,
+    $service,
+);
 
 BEGIN {
     my $builder = Test::More->builder;
@@ -14,6 +22,7 @@ BEGIN {
 
 sub import {
     my ($class, %args) = @_;
+    my $caller = caller;
 
     strict->import;
     warnings->import;
@@ -24,11 +33,16 @@ sub import {
         no warnings;
         check_use(qw(Config::Pit)) or exit;
     }
-    my $config = check_config('google.com') or exit;
-    if (my $title = $args{spreadsheet_title}) {
-        check_spreadsheet_exists(
-            {title => $title, config => $config}
-        ) or exit;
+    check_config(PIT_KEY) or exit;
+    if (my $title = $args{title}) {
+        $SPREADSHEET_TITLE = $title;
+        check_spreadsheet_exists({title => $title}) or exit;
+    }
+    {
+        no strict 'refs';
+        for (qw(config service spreadsheet)) {
+            *{"$caller\::$_"} = \&{$_};
+        }
     }
 }
 
@@ -56,11 +70,11 @@ sub check_use {
 }
 
 sub check_config {
-    my ($key) = @_;
-    my $config = Config::Pit::get($key);
-    unless ($config->{username} && $config->{password}) {
+    my $key = shift;
+    my $config = &config($key);
+    unless ($config) {
         plan skip_all 
-            => "set username and password for google.com via 'ppit set $key'";
+            => "set username and password for $key via 'ppit set $key'";
         return;
     }
     return $config;
@@ -69,18 +83,42 @@ sub check_config {
 sub check_spreadsheet_exists {
     my ($args) = @_;
     $args->{title} or return 1;
-    my $service = Net::Google::Spreadsheets->new(
-        {
-            username => $args->{config}->{username},
-            password => $args->{config}->{password},
-        }
-    ) or die;
+    my $service = &service or die;
     my $sheet = $service->spreadsheet({title => $args->{title}});
     unless ($sheet) {
         plan skip_all => "spreadsheet named '$args->{title}' doesn't exist";
         return;
     }
     return $sheet;
+}
+
+sub config {
+    my $key = shift;
+    return $config if $config;
+    my $c = Config::Pit::get($key);
+    unless ($c->{username} && $c->{password}) {
+        return;
+    }
+    $config = $c;
+    return $config;
+}
+
+sub service {
+    return $service if $service;
+    my $c = &config or return;
+    my $s = Net::Google::Spreadsheets->new(
+        {
+            username => $c->{username},
+            password => $c->{password},
+        }
+    ) or return;
+    $service = $s;
+    return $service;
+}
+
+sub spreadsheet {
+    my $title = shift || $SPREADSHEET_TITLE;
+    return service->spreadsheet({title => $title});
 }
 
 1;

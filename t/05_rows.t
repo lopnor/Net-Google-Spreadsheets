@@ -1,30 +1,8 @@
-use strict;
+use t::Util title => 'test for Net::Google::Spreadsheets';
 use Test::More;
-use utf8;
 
-use Net::Google::Spreadsheets;
+ok my $ws = spreadsheet->add_worksheet, 'add worksheet';
 
-my $ws;
-BEGIN {
-    plan skip_all => 'set TEST_NET_GOOGLE_SPREADSHEETS to run this test'
-        unless $ENV{TEST_NET_GOOGLE_SPREADSHEETS};
-    eval "use Config::Pit";
-    plan skip_all => 'This Test needs Config::Pit.' if $@;
-    my $config = pit_get('google.com', require => {
-            'username' => 'your username',
-            'password' => 'your password',
-        }
-    );
-    my $service = Net::Google::Spreadsheets->new(
-        username => $config->{username},
-        password => $config->{password},
-    );
-    my $title = 'test for Net::Google::Spreadsheets';
-    my $ss = $service->spreadsheet({title => $title});
-    plan skip_all => "test spreadsheet '$title' doesn't exist." unless $ss;
-    plan tests => 14;
-    $ws = $ss->add_worksheet;
-}
 {
     is scalar $ws->rows, 0;
     $ws->batchupdate_cell(
@@ -61,6 +39,7 @@ BEGIN {
     ok $row->delete;
     is scalar $ws->rows, 0;
 }
+
 {
     $ws->add_row( { name => $_ } ) for qw(danjou lopnor soffritto);
     is scalar $ws->rows, 3;
@@ -68,6 +47,7 @@ BEGIN {
     isa_ok $row, 'Net::Google::Spreadsheets::Row';
     is_deeply $row->content, {name => 'lopnor', nick => '', mail => ''};
 }
-END {
-    $ws->delete;
-}
+
+ok $ws->delete, 'delete worksheet';
+
+done_testing;
