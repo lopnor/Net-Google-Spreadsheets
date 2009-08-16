@@ -8,7 +8,6 @@ extends 'Net::Google::Spreadsheets::Base';
 use Carp;
 use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::UserAgent;
-use Net::Google::Spreadsheets::Spreadsheet;
 
 our $VERSION = '0.05';
 
@@ -16,15 +15,15 @@ BEGIN {
     $XML::Atom::DefaultVersion = 1;
 }
 
-has +contents => (
+has spreadsheet_feed => (
+    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
     is => 'ro',
-    default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full'
+    isa => 'Str',
+    default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full',
+    entry_class => 'Net::Google::Spreadsheets::Spreadsheet',
 );
 
-has +service => (
-    is => 'ro',
-    default => sub {return $_[0]},
-);
+sub _build_service {return $_[0]}
 
 has source => (
     isa => 'Str',
@@ -40,9 +39,11 @@ has ua => (
     isa => 'Net::Google::Spreadsheets::UserAgent',
     is => 'ro',
     handles => [qw(request feed entry post put)],
+    required => 1,
+    lazy_build => 1,
 );
 
-sub BUILD {
+sub _build_ua {
     my $self = shift;
     my $authsub = Net::Google::AuthSub->new(
         service => 'wise',
@@ -55,7 +56,7 @@ sub BUILD {
     unless ($res && $res->is_success) {
         croak 'Net::Google::AuthSub login failed';
     } 
-    $self->{ua} = Net::Google::Spreadsheets::UserAgent->new(
+    return Net::Google::Spreadsheets::UserAgent->new(
         source => $self->source,
         auth => $res->auth,
     );
@@ -63,41 +64,9 @@ sub BUILD {
 
 __PACKAGE__->meta->make_immutable;
 
-sub spreadsheets {
-    my ($self, $args) = @_;
-    if ($args->{key}) {
-        my $atom = eval {$self->entry($self->contents.'/'.$args->{key})};
-        $atom or return;
-        return Net::Google::Spreadsheets::Spreadsheet->new(
-            atom => $atom,
-            service => $self,
-        );
-    } else {
-        my $cond = $args->{title} ?
-        {
-            title => $args->{title},
-            'title-exact' => 'true'
-        } : {};
-        my $feed = $self->feed(
-            $self->contents,
-            $cond,
-        );
-        return grep {
-            (!%$args && 1)
-            ||
-            ($args->{title} && $_->title eq $args->{title})
-        } map {
-            Net::Google::Spreadsheets::Spreadsheet->new(
-                atom => $_,
-                service => $self
-            )
-        } $feed->entries;
-    }
-}
-
-sub spreadsheet {
-    my ($self, $args) = @_;
-    return ($self->spreadsheets($args))[0];
+sub BUILD {
+    my ($self) = @_;
+    $self->ua; #check if login ok?
 }
 
 1;

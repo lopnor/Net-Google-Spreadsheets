@@ -15,41 +15,38 @@ has key => (
     isa => 'Str',
     is => 'ro',
     required => 1,
-    lazy => 1,
+    lazy_build => 1,
+);
+
+sub _build_key {
+    my $self = shift;
+    my $key = file(URI->new($self->id)->path)->basename;
+    return $key;
+}
+
+has worksheet_feed => (
+    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
+    is => 'rw',
+    isa => 'Str',
+    entry_class => 'Net::Google::Spreadsheets::Worksheet',
+    _update_atom => sub {
+        my ($self) = @_;
+        $self->{worksheet_feed} = $self->atom->content->elem->getAttribute('src');
+    },
+);
+
+has table_feed => (
+    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
+    is => 'rw',
+    isa => 'Str',
+    entry_class => 'Net::Google::Spreadsheets::Table',
     default => sub {
         my $self = shift;
-        my $key = file(URI->new($self->id)->path)->basename;
-        return $key;
+        return sprintf('http://spreadsheets.google.com/feeds/%s/tables',$self->key);
     }
 );
 
-after _update_atom => sub {
-    my ($self) = @_;
-    $self->{content} = $self->atom->content->elem->getAttribute('src');
-};
-
 __PACKAGE__->meta->make_immutable;
-
-sub worksheet {
-    my ($self, $cond) = @_;
-    return ($self->worksheets($cond))[0];
-}
-
-sub worksheets {
-    my ($self, $cond) = @_;
-    return $self->list_contents('Net::Google::Spreadsheets::Worksheet', $cond);
-}
-
-sub add_worksheet {
-    my ($self, $args) = @_;
-    my $entry = Net::Google::Spreadsheets::Worksheet->new($args || {})->entry;
-    my $atom = $self->service->post($self->content, $entry);
-    $self->sync;
-    return Net::Google::Spreadsheets::Worksheet->new(
-        container => $self,
-        atom => $atom,
-    );
-}
 
 1;
 __END__

@@ -1,15 +1,8 @@
-package Net::Google::Spreadsheets::Row;
+package Net::Google::Spreadsheets::Table;
 use Moose;
 use namespace::clean -except => 'meta';
 
 extends 'Net::Google::Spreadsheets::Base';
-
-has content => (
-    isa => 'HashRef',
-    is => 'rw',
-    default => sub { +{} },
-    trigger => sub { $_[0]->update },
-);
 
 after _update_atom => sub {
     my ($self) = @_;
@@ -29,27 +22,12 @@ around entry => sub {
 
 __PACKAGE__->meta->make_immutable;
 
-sub param {
-    my ($self, $arg) = @_;
-    return $self->content unless $arg;
-    if (ref $arg && (ref $arg eq 'HASH')) {
-        return $self->content(
-            {
-                %{$self->content},
-                %$arg,
-            }
-        );
-    } else {
-        return $self->content->{$arg};
-    }
-}
-
 1;
 __END__
 
 =head1 NAME
 
-Net::Google::Spreadsheets::Row - A representation class for Google Spreadsheet row.
+Net::Google::Spreadsheets::Table - A representation class for Google Spreadsheet table.
 
 =head1 SYNOPSIS
 
@@ -136,9 +114,9 @@ Rewritable attribute. You can get and set the value.
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
 
 L<Net::Google::AuthSub>
 

@@ -4,6 +4,11 @@ use namespace::clean -except => 'meta';
 
 extends 'Net::Google::Spreadsheets::Base';
 
+has content => (
+    isa => 'Str',
+    is => 'ro',
+);
+
 has row => (
     isa => 'Int',
     is => 'ro',

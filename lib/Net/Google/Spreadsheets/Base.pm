@@ -7,9 +7,10 @@ has service => (
     isa => 'Net::Google::Spreadsheets',
     is => 'ro',
     required => 1,
-    lazy => 1,
-    default => sub { shift->container->service },
+    lazy_build => 1,
 );
+
+sub _build_service { shift->container->service };
 
 my %ns = (
     gd => 'http://schemas.google.com/g/2005',
@@ -18,10 +19,12 @@ my %ns = (
     batch => 'http://schemas.google.com/gdata/batch',
 );
 
-my $pkg = __PACKAGE__;
 while (my ($prefix, $uri) = each %ns) {
-    no strict 'refs';
-    *{"$pkg\::${prefix}ns"} = sub {XML::Atom::Namespace->new($prefix, $uri)};
+    __PACKAGE__->meta->add_method(
+        "${prefix}ns" => sub {
+            XML::Atom::Namespace->new($prefix, $uri)
+        }
+    );
 }
 
 my %rel2label = (
@@ -32,11 +35,6 @@ my %rel2label = (
 for (values %rel2label) {
     has $_ => (isa => 'Str', is => 'ro');
 }
-
-has accessor => (
-    isa => 'Str',
-    is => 'ro',
-);
 
 has atom => (
     isa => 'XML::Atom::Entry',
@@ -51,11 +49,6 @@ has atom => (
 );
 
 has id => (
-    isa => 'Str',
-    is => 'ro',
-);
-
-has content => (
     isa => 'Str',
     is => 'ro',
 );
@@ -88,13 +81,6 @@ sub _update_atom {
         my $label = $rel2label{$_->rel} or next;
         $self->{$label} = $_->href;
     }
-}
-
-sub list_contents {
-    my ($self, $class, $cond) = @_;
-    $self->content or return;
-    my $feed = $self->service->feed($self->content, $cond);
-    return map {$class->new(container => $self, atom => $_)} $feed->entries;
 }
 
 sub entry {

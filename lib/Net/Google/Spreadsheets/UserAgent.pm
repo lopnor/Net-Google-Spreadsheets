@@ -25,22 +25,22 @@ has ua => (
     isa => 'LWP::UserAgent',
     is => 'ro',
     required => 1,
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        my $ua = LWP::UserAgent->new(
-            agent => $self->source,
-            requests_redirectable => [],
-        );
-        $ua->default_headers(
-            HTTP::Headers->new(
-                Authorization => sprintf('GoogleLogin auth=%s', $self->auth),
-                GData_Version => 2,
-            )
-        );
-        return $ua;
-    }
+    lazy_build => 1,
 );
+sub _build_ua {
+    my $self = shift;
+    my $ua = LWP::UserAgent->new(
+        agent => $self->source,
+        requests_redirectable => [],
+    );
+    $ua->default_headers(
+        HTTP::Headers->new(
+            Authorization => sprintf('GoogleLogin auth=%s', $self->auth),
+            GData_Version => 2,
+        )
+    );
+    return $ua;
+}
 
 __PACKAGE__->meta->make_immutable;
 
