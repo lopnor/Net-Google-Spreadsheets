@@ -22,7 +22,7 @@ has worksheet_feed => (
     is => 'rw',
     isa => 'Str',
     entry_class => 'Net::Google::Spreadsheets::Worksheet',
-    _update_atom => sub {
+    from_atom => sub {
         my ($self) = @_;
         $self->{worksheet_feed} = $self->atom->content->elem->getAttribute('src');
     },
@@ -41,7 +41,7 @@ sub _build_table_feed {
     return sprintf('http://spreadsheets.google.com/feeds/%s/tables',$self->key);
 }
 
-after _update_atom => sub {
+after from_atom => sub {
     my ($self) = @_;
     $self->{key} = file(URI->new($self->id)->path)->basename;
 };

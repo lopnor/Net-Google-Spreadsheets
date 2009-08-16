@@ -16,7 +16,7 @@ has row_feed => (
         my ($self, $args) = @_;
         return {content => $args};
     },
-    _update_atom => sub {
+    from_atom => sub {
         my $self = shift;
         $self->{row_feed} = $self->atom->content->elem->getAttribute('src');
     },
@@ -45,7 +45,7 @@ has cellsfeed => (
         }
         return $args;
     },
-    _update_atom => sub {
+    from_atom => sub {
         my ($self) = @_;
         ($self->{cellsfeed}) = map {$_->href} grep {
             $_->rel eq 'http://schemas.google.com/spreadsheets/2006#cellsfeed'
@@ -67,7 +67,7 @@ has col_count => (
     trigger => sub {$_[0]->update}
 );
 
-around entry => sub {
+around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
     $entry->set($self->gsns, 'rowCount', $self->row_count);
@@ -75,7 +75,7 @@ around entry => sub {
     return $entry;
 };
 
-after _update_atom => sub {
+after from_atom => sub {
     my ($self) = @_;
     $self->{row_count} = $self->atom->get($self->gsns, 'rowCount');
     $self->{col_count} = $self->atom->get($self->gsns, 'colCount');
@@ -89,7 +89,7 @@ sub batchupdate_cell {
     for ( @args ) {
         my $id = sprintf("%s/R%sC%s",$self->cellsfeed, $_->{row}, $_->{col});
         $_->{id} = $_->{editurl} = $id;
-        my $entry = Net::Google::Spreadsheets::Cell->new($_)->entry;
+        my $entry = Net::Google::Spreadsheets::Cell->new($_)->to_atom;
         $entry->set($self->batchns, operation => '', {type => 'update'});
         $entry->set($self->batchns, id => $id);
         $feed->add_entry($entry);

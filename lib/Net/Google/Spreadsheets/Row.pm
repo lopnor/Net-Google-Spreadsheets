@@ -11,14 +11,14 @@ has content => (
     trigger => sub { $_[0]->update },
 );
 
-after _update_atom => sub {
+after from_atom => sub {
     my ($self) = @_;
     for my $node ($self->elem->getElementsByTagNameNS($self->gsxns->{uri}, '*')) {
         $self->{content}->{$node->localname} = $node->textContent;
     }
 };
 
-around entry => sub {
+around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
     while (my ($key, $value) = each %{$self->{content}}) {

@@ -25,7 +25,7 @@ has input_value => (
     trigger => sub {$_[0]->update},
 );
 
-after _update_atom => sub {
+after from_atom => sub {
     my ($self) = @_;
     my ($elem) = $self->elem->getElementsByTagNameNS($self->gsns->{uri}, 'cell');
     $self->{row} = $elem->getAttribute('row');
@@ -34,7 +34,7 @@ after _update_atom => sub {
     $self->{content} = $elem->textContent || '';
 };
 
-around entry => sub {
+around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
     $entry->set($self->gsns, 'cell', '',

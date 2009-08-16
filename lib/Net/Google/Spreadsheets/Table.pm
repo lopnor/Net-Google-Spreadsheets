@@ -29,14 +29,14 @@ has header => ( is => 'ro', isa => 'Int', required => 1, default => 1 );
 has start_row => ( is => 'ro', isa => 'Int', required => 1, default => 2 );
 has columns => ( is => 'ro', isa => 'ColumnList', coerce => 1 );
 
-after _update_atom => sub {
+after from_atom => sub {
     my ($self) = @_;
-    for my $node ($self->elem->getElementsByTagNameNS($self->gsxns->{uri}, '*')) {
-        $self->{content}->{$node->localname} = $node->textContent;
-    }
+    $self->{summary} = $self->atom->summary;
+    my ($ws) = $self->elem->getElementsByTagNameNS($self->gsns->{uri}, 'worksheet');
+    $self->{worksheet} = $ws->getAttribute('name');
 };
 
-around entry => sub {
+around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
     $entry->summary($self->summary) if $self->summary;

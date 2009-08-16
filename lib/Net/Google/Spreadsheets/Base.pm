@@ -43,7 +43,7 @@ has atom => (
         my ($self, $arg) = @_;
         my $id = $self->atom->get($self->ns, 'id');
         croak "can't set different id!" if $self->id && $self->id ne $id;
-        $self->_update_atom;
+        $self->from_atom;
     },
     handles => ['ns', 'elem', 'author'],
 );
@@ -72,7 +72,7 @@ has container => (
 
 __PACKAGE__->meta->make_immutable;
 
-sub _update_atom {
+sub from_atom {
     my ($self) = @_;
     $self->{title} = $self->atom->title;
     $self->{id} = $self->atom->get($self->ns, 'id');
@@ -83,7 +83,7 @@ sub _update_atom {
     }
 }
 
-sub entry {
+sub to_atom {
     my ($self) = @_;
     my $entry = XML::Atom::Entry->new;
     $entry->title($self->title) if $self->title;
@@ -102,7 +102,7 @@ sub update {
     my $atom = $self->service->put(
         {
             self => $self,
-            entry => $self->entry,
+            entry => $self->to_atom,
         }
     );
     $self->container->sync;

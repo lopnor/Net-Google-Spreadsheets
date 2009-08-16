@@ -31,7 +31,7 @@ has query_arg_builder => (
     },
 );
 
-has _update_atom => (
+has from_atom => (
     is => 'ro',
     isa => 'CodeRef',
     required => 1,
@@ -48,7 +48,7 @@ after install_accessors => sub {
     my $entry_class = $attr->entry_class;
     my $arg_builder = $attr->entry_arg_builder;
     my $query_builder = $attr->query_arg_builder;
-    my $_update_atom = $attr->_update_atom;
+    my $from_atom = $attr->from_atom;
     my $method_base = lc [ split('::', $entry_class) ]->[-1];
 
     $class->add_method(
@@ -56,7 +56,7 @@ after install_accessors => sub {
             my ($self, $args) = @_;
             Class::MOP::load_class($entry_class);
             $args = $arg_builder->($self, $args);
-            my $entry = $entry_class->new($args)->entry;
+            my $entry = $entry_class->new($args)->to_atom;
             my $atom = $self->service->post($self->$key, $entry);
             $self->sync;
             return $entry_class->new(
@@ -91,9 +91,9 @@ after install_accessors => sub {
     );
 
     $class->add_after_method_modifier(
-        '_update_atom' => sub {
+        'from_atom' => sub {
             my $self = shift;
-            $_update_atom->($self);
+            $from_atom->($self);
         }
     );
 };
