@@ -1,8 +1,33 @@
 package Net::Google::Spreadsheets::Table;
 use Moose;
+use Moose::Util::TypeConstraints;
+
+use XML::Atom::Util;
 use namespace::clean -except => 'meta';
 
+subtype 'ColumnList'
+    => as 'ArrayRef[Net::Google::Spreadsheets::Column]';
+coerce 'ColumnList'
+    => from 'ArrayRef[HashRef]'
+    => via {
+        [ map {Net::Google::Spreadsheets::Column->new($_)} @$_ ];
+    };
+
+subtype 'WorksheetName'
+    => as 'Str';
+coerce 'WorksheetName'
+    => from 'Net::Google::Spreadsheets::Worksheet'
+    => via {
+        $_->title
+    };
+
 extends 'Net::Google::Spreadsheets::Base';
+
+has summary => ( is => 'rw', isa => 'Str' );
+has worksheet => ( is => 'ro', isa => 'WorksheetName', coerce => 1 );
+has header => ( is => 'ro', isa => 'Int', required => 1, default => 1 ); 
+has start_row => ( is => 'ro', isa => 'Int', required => 1, default => 2 );
+has columns => ( is => 'ro', isa => 'ColumnList', coerce => 1 );
 
 after _update_atom => sub {
     my ($self) = @_;
@@ -14,11 +39,37 @@ after _update_atom => sub {
 around entry => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    while (my ($key, $value) = each %{$self->{content}}) {
-        $entry->set($self->gsxns, $key, $value);
+    $entry->summary($self->summary) if $self->summary;
+    $entry->set($self->gsns, 'worksheet', '', {name => $self->worksheet});
+    $entry->set($self->gsns, 'header', '', {row => $self->header});
+    my $columns = XML::Atom::Util::create_element($self->gsns, 'data');
+    $columns->setAttribute(startRow => $self->start_row);
+    for ( @{$self->columns} ) {
+        my $column = XML::Atom::Util::create_element($self->gsns, 'column');
+        $column->setAttribute(index => $_->index);
+        $column->setAttribute(name => $_->name);
+        $columns->appendChild($column);
     }
+    $entry->set($self->gsns, 'data', $columns);
+
     return $entry;
 };
+
+__PACKAGE__->meta->make_immutable;
+
+package # hide from PAUSE
+    Net::Google::Spreadsheets::Column;
+use Moose;
+
+has index => (
+    is => 'ro',
+    isa => 'Int',
+);
+
+has name => (
+    is => 'ro',
+    isa => 'Str',
+);
 
 __PACKAGE__->meta->make_immutable;
 

@@ -36,7 +36,7 @@ sub _build_ua {
     $ua->default_headers(
         HTTP::Headers->new(
             Authorization => sprintf('GoogleLogin auth=%s', $self->auth),
-            GData_Version => 2,
+            GData_Version => '3.0',
         )
     );
     return $ua;

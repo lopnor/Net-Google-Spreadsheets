@@ -6,6 +6,7 @@ extends 'Net::Google::Spreadsheets::Base';
 
 use Net::Google::Spreadsheets::Worksheet;
 use Path::Class;
+use URI;
 
 has +title => (
     is => 'ro',
@@ -14,15 +15,7 @@ has +title => (
 has key => (
     isa => 'Str',
     is => 'ro',
-    required => 1,
-    lazy_build => 1,
 );
-
-sub _build_key {
-    my $self = shift;
-    my $key = file(URI->new($self->id)->path)->basename;
-    return $key;
-}
 
 has worksheet_feed => (
     traits => ['Net::Google::Spreadsheets::Traits::Feed'],
@@ -40,11 +33,18 @@ has table_feed => (
     is => 'rw',
     isa => 'Str',
     entry_class => 'Net::Google::Spreadsheets::Table',
-    default => sub {
-        my $self = shift;
-        return sprintf('http://spreadsheets.google.com/feeds/%s/tables',$self->key);
-    }
+    lazy_build => 1,
 );
+
+sub _build_table_feed {
+    my $self = shift;
+    return sprintf('http://spreadsheets.google.com/feeds/%s/tables',$self->key);
+}
+
+after _update_atom => sub {
+    my ($self) = @_;
+    $self->{key} = file(URI->new($self->id)->path)->basename;
+};
 
 __PACKAGE__->meta->make_immutable;
 
