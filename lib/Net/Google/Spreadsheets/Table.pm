@@ -1,16 +1,40 @@
 package Net::Google::Spreadsheets::Table;
 use Moose;
 use Moose::Util::TypeConstraints;
-
-use XML::Atom::Util;
 use namespace::clean -except => 'meta';
+use XML::Atom::Util qw(nodelist first create_element);
 
 subtype 'ColumnList'
     => as 'ArrayRef[Net::Google::Spreadsheets::Column]';
 coerce 'ColumnList'
     => from 'ArrayRef[HashRef]'
     => via {
-        [ map {Net::Google::Spreadsheets::Column->new($_)} @$_ ];
+        [ map {Net::Google::Spreadsheets::Column->new($_)} @$_ ]
+    };
+coerce 'ColumnList'
+    => from 'ArrayRef[Str]'
+    => via {
+        my @c;
+        my $index = 0;
+        for my $value (@$_) {
+            push @c, Net::Google::Spreadsheets::Column->new(
+                index => ++$index,
+                name => $value,
+            );
+        }
+        \@c;
+    };
+coerce 'ColumnList'
+    => from 'HashRef'
+    => via {
+        my @c;
+        while (my ($key, $value) = each(%$_)) {
+            push @c, Net::Google::Spreadsheets::Column->new(
+                index => $key,
+                name => $value,
+            );
+        }
+        \@c;
     };
 
 subtype 'WorksheetName'
@@ -23,6 +47,21 @@ coerce 'WorksheetName'
 
 extends 'Net::Google::Spreadsheets::Base';
 
+has record_feed => (
+    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
+    is => 'ro',
+    isa => 'Str',
+    entry_class => 'Net::Google::Spreadsheets::Record',
+    entry_arg_builder => sub {
+        my ($self, $args) = @_;
+        return {content => $args};
+    },
+    from_atom => sub {
+        my $self = shift;
+        $self->{record_feed} = first($self->elem, '', 'content')->getAttribute('src');
+    },
+);
+
 has summary => ( is => 'rw', isa => 'Str' );
 has worksheet => ( is => 'ro', isa => 'WorksheetName', coerce => 1 );
 has header => ( is => 'ro', isa => 'Int', required => 1, default => 1 ); 
@@ -31,9 +70,20 @@ has columns => ( is => 'ro', isa => 'ColumnList', coerce => 1 );
 
 after from_atom => sub {
     my ($self) = @_;
+    my $gsns = $self->gsns->{uri};
+    my $elem = $self->elem;
     $self->{summary} = $self->atom->summary;
-    my ($ws) = $self->elem->getElementsByTagNameNS($self->gsns->{uri}, 'worksheet');
-    $self->{worksheet} = $ws->getAttribute('name');
+    $self->{worksheet} = first( $elem, $gsns, 'worksheet')->getAttribute('name');
+    $self->{header} = first( $elem, $gsns, 'header')->getAttribute('row');
+    my @columns;
+    my $data = first($elem, $gsns, 'data');
+    for (nodelist($data, $gsns, 'column')) {
+        push @columns, Net::Google::Spreadsheets::Column->new(
+            index => $_->getAttribute('index'),
+            name => $_->getAttribute('name'),
+        );
+    }
+    $self->{columns} = \@columns;
 };
 
 around to_atom => sub {
@@ -42,10 +92,10 @@ around to_atom => sub {
     $entry->summary($self->summary) if $self->summary;
     $entry->set($self->gsns, 'worksheet', '', {name => $self->worksheet});
     $entry->set($self->gsns, 'header', '', {row => $self->header});
-    my $columns = XML::Atom::Util::create_element($self->gsns, 'data');
+    my $columns = create_element($self->gsns, 'data');
     $columns->setAttribute(startRow => $self->start_row);
     for ( @{$self->columns} ) {
-        my $column = XML::Atom::Util::create_element($self->gsns, 'column');
+        my $column = create_element($self->gsns, 'column');
         $column->setAttribute(index => $_->index);
         $column->setAttribute(name => $_->name);
         $columns->appendChild($column);
@@ -63,7 +113,7 @@ use Moose;
 
 has index => (
     is => 'ro',
-    isa => 'Int',
+    isa => 'Str',
 );
 
 has name => (

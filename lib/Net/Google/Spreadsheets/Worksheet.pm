@@ -102,7 +102,9 @@ sub batchupdate_cell {
             container => $self,
         )
     } grep {
-        my ($node) = $_->elem->getElementsByTagNameNS($self->batchns->{uri}, 'status');
+        my $node = XML::Atom::Util::first(
+            $_->elem, $self->batchns->{uri}, 'status'
+        );
         $node->getAttribute('code') == 200;
     } $res_feed->entries;
 }

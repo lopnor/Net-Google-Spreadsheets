@@ -8,6 +8,7 @@ has service => (
     is => 'ro',
     required => 1,
     lazy_build => 1,
+    weak_ref => 1,
 );
 
 sub _build_service { shift->container->service };

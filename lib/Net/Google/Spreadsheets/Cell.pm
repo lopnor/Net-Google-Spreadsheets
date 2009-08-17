@@ -1,6 +1,7 @@
 package Net::Google::Spreadsheets::Cell;
 use Moose;
 use namespace::clean -except => 'meta';
+use XML::Atom::Util qw(first);
 
 extends 'Net::Google::Spreadsheets::Base';
 
@@ -27,7 +28,7 @@ has input_value => (
 
 after from_atom => sub {
     my ($self) = @_;
-    my ($elem) = $self->elem->getElementsByTagNameNS($self->gsns->{uri}, 'cell');
+    my $elem = first( $self->elem, $self->gsns->{uri}, 'cell');
     $self->{row} = $elem->getAttribute('row');
     $self->{col} = $elem->getAttribute('col');
     $self->{input_value} = $elem->getAttribute('inputValue');

@@ -1,19 +1,14 @@
 package Net::Google::Spreadsheets::Row;
 use Moose;
 use namespace::clean -except => 'meta';
+use XML::Atom::Util qw(nodelist);
 
 extends 'Net::Google::Spreadsheets::Base';
-
-has content => (
-    isa => 'HashRef',
-    is => 'rw',
-    default => sub { +{} },
-    trigger => sub { $_[0]->update },
-);
+with 'Net::Google::Spreadsheets::Role::HasContent';
 
 after from_atom => sub {
     my ($self) = @_;
-    for my $node ($self->elem->getElementsByTagNameNS($self->gsxns->{uri}, '*')) {
+    for my $node (nodelist($self->elem, $self->gsxns->{uri}, '*')) {
         $self->{content}->{$node->localname} = $node->textContent;
     }
 };
