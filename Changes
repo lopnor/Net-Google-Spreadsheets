@@ -1,7 +1,13 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.06_01 Mon Arg 16 16:01:27 2009
+        - Supports Google Spreadsheets API version 3.0
+        - Add table and record feeds supports
+        - Better error handlings (no more redirects, captures xml parse error, and more)
+        - Refactored internals
+
 0.05    Sun Aug 15 09:47:50 2009
-        - Fix Moose attribute problem #48627(thanks to Eric Celeste, IMALPASS)
+        - Fix Moose attribute problem #48627 (thanks to Eric Celeste, IMALPASS)
 
 0.04    Wed Apr 15 09:22:59 2009
         - Updated POD (thanks to Mr. Grue)

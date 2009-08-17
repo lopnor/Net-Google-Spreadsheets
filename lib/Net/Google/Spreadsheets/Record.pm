@@ -79,7 +79,7 @@ Net::Google::Spreadsheets::Record - A representation class for Google Spreadshee
   my $newval = $record->param({address => 'elsewhere'});
   # updates address (and keeps other fields) and returns new record value (with all fields)
 
-  my $hashref = $record->param;
+  my $hashref2 = $record->param;
   # same as $record->content;
 
 =head1 METHODS

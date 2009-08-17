@@ -187,7 +187,21 @@ See L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html#L
 
 =head2 row(\%condition)
 
-Returns first item of spreadsheets(\%condition) if available.
+Returns first item of rows(\%condition) if available.
+
+=head2 add_row(\%contents)
+
+Creates new row and returns a Net::Google::Spreadsheets::Row object representing it. Arguments are
+contents of a row as a hashref.
+
+  my $row = $ws->add_row(
+    {
+        name => 'Nobuo Danjou',
+        nick => 'lopnor',
+        mail => 'nobuo.danjou@gmail.com',
+        age  => '33',
+    }
+  );
 
 =head2 cells(\%args)
 

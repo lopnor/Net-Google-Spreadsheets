@@ -5,11 +5,11 @@ use namespace::clean -except => 'meta';
 use XML::Atom::Util qw(nodelist first create_element);
 
 subtype 'ColumnList'
-    => as 'ArrayRef[Net::Google::Spreadsheets::Column]';
+    => as 'ArrayRef[Net::Google::Spreadsheets::Table::Column]';
 coerce 'ColumnList'
     => from 'ArrayRef[HashRef]'
     => via {
-        [ map {Net::Google::Spreadsheets::Column->new($_)} @$_ ]
+        [ map {Net::Google::Spreadsheets::Table::Column->new($_)} @$_ ]
     };
 coerce 'ColumnList'
     => from 'ArrayRef[Str]'
@@ -17,7 +17,7 @@ coerce 'ColumnList'
         my @c;
         my $index = 0;
         for my $value (@$_) {
-            push @c, Net::Google::Spreadsheets::Column->new(
+            push @c, Net::Google::Spreadsheets::Table::Column->new(
                 index => ++$index,
                 name => $value,
             );
@@ -29,7 +29,7 @@ coerce 'ColumnList'
     => via {
         my @c;
         while (my ($key, $value) = each(%$_)) {
-            push @c, Net::Google::Spreadsheets::Column->new(
+            push @c, Net::Google::Spreadsheets::Table::Column->new(
                 index => $key,
                 name => $value,
             );
@@ -83,7 +83,7 @@ after from_atom => sub {
     $self->{start_row} = $data->getAttribute('startRow');
     $self->{num_rows} = $data->getAttribute('numRows');
     for (nodelist($data, $gsns, 'column')) {
-        push @columns, Net::Google::Spreadsheets::Column->new(
+        push @columns, Net::Google::Spreadsheets::Table::Column->new(
             index => $_->getAttribute('index'),
             name => $_->getAttribute('name'),
         );
@@ -114,7 +114,7 @@ around to_atom => sub {
 __PACKAGE__->meta->make_immutable;
 
 package # hide from PAUSE
-    Net::Google::Spreadsheets::Column;
+    Net::Google::Spreadsheets::Table::Column;
 use Moose;
 
 has 'index' => ( is => 'ro', isa => 'Str' );
@@ -138,79 +138,77 @@ Net::Google::Spreadsheets::Table - A representation class for Google Spreadsheet
     password => 'mypassword',
   );
 
-  # get a row
-  my $row = $service->spreadsheet(
+  # get a table
+  my $table = $service->spreadsheet(
     {
         title => 'list for new year cards',
     }
-  )->worksheet(
+  )->table(
     {
-        title => 'Sheet1',
-    }
-  )->row(
-    {
-        sq => 'id = 1000'
+        title => 'sample table',
     }
   );
 
-  # get the content of a row
-  my $hashref = $row->content;
-  my $id = $hashref->{id};
-  my $address = $hashref->{address};
-
-  # update a row
-  $row->content(
+  # create a record
+  my $r = $table->add_record(
     {
-        id => 1000,
-        address => 'somewhere',
-        zip => '100-0001',
         name => 'Nobuo Danjou',
+        nick => 'lopnor',
+        mail => 'nobuo.danjou@gmail.com',
+        age  => '33',
     }
   );
 
-  # get and set values partially
-  
-  my $value = $row->param('name');
-  # returns 'Nobuo Danjou'
-  
-  my $newval = $row->param({address => 'elsewhere'});
-  # updates address (and keeps other fields) and returns new row value (with all fields)
+  # get records
+  my @records = $table->records;
 
-  my $hashref = $row->param;
-  # same as $row->content;
+  # search records
+  @records = $table->records({sq => 'age > 20'});
+  
+  # search a record 
+  my $record = $table->record({sq => 'name = "Nobuo Danjou"'});
 
 =head1 METHODS
 
-=head2 param
+=head2 records(\%condition)
 
-sets and gets content value.
+Returns a list of Net::Google::Spreadsheets::Record objects. Acceptable arguments are:
 
-=head1 CAVEATS
+=over 4
 
-Space characters in hash key of rows will be removed when you access rows. See below.
+=item sq
 
-  my $ws = Net::Google::Spreadsheets->new(
-    username => 'me@gmail.com', 
-    password => 'foobar'
-  )->spreadsheet({titile => 'sample'})->worksheet(1);
-  $ws->batchupdate_cell(
-    {col => 1,row => 1, input_value => 'name'},
-    {col => 2,row => 1, input_value => 'mail address'},
-  ); 
-  $ws->add_row(
+Structured query on the full text in the worksheet. see the URL below for detail.
+
+=item orderby
+
+Set column name to use for ordering.
+
+=item reverse
+
+Set 'true' or 'false'. The default is 'false'.
+
+=back
+
+See L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html#RecordParameters> for details.
+
+=head2 record(\%condition)
+
+Returns first item of records(\%condition) if available.
+
+=head2 add_record(\%contents)
+
+Creates new record and returns a Net::Google::Spreadsheets::Record object representing it. 
+Arguments are contents of a row as a hashref.
+
+  my $record = $table->add_record(
     {
-        name => 'my name',
-        mailaddress => 'me@gmail.com',
-  #      above passes, below fails.
-  #      'mail address' => 'me@gmail.com',
+        name => 'Nobuo Danjou',
+        nick => 'lopnor',
+        mail => 'nobuo.danjou@gmail.com',
+        age  => '33',
     }
   );
-
-=head1 ATTRIBUTES
-
-=head2 content
-
-Rewritable attribute. You can get and set the value.
 
 =head1 SEE ALSO
 
@@ -221,6 +219,10 @@ L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
 L<Net::Google::AuthSub>
 
 L<Net::Google::Spreadsheets>
+
+L<Net::Google::Spreadsheets::Spreadsheet>
+
+L<Net::Google::Spreadsheets::Record>
 
 =head1 AUTHOR
 

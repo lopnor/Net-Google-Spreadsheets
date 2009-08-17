@@ -9,7 +9,7 @@ use Carp;
 use Net::Google::AuthSub;
 use Net::Google::Spreadsheets::UserAgent;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06_01';
 
 BEGIN {
     $XML::Atom::DefaultVersion = 1;

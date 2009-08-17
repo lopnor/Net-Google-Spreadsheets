@@ -93,7 +93,7 @@ Net::Google::Spreadsheets::Row - A representation class for Google Spreadsheet r
   my $newval = $row->param({address => 'elsewhere'});
   # updates address (and keeps other fields) and returns new row value (with all fields)
 
-  my $hashref = $row->param;
+  my $hashref2 = $row->param;
   # same as $row->content;
 
 =head1 METHODS
