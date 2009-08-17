@@ -68,7 +68,7 @@ has header => ( is => 'ro', isa => 'Int', required => 1, default => 1 );
 has start_row => ( is => 'ro', isa => 'Int', required => 1, default => 2 );
 has num_rows => ( is => 'ro', isa => 'Int' );
 has columns => ( is => 'ro', isa => 'ColumnList', coerce => 1 );
-has insertion_mode => ( is => 'ro', isa => 'Str', default => 'insert' );
+has insertion_mode => ( is => 'ro', isa => (enum ['insert', 'overwrite']), default => 'insert' );
 
 after from_atom => sub {
     my ($self) = @_;
@@ -108,7 +108,6 @@ around to_atom => sub {
         $data->appendChild($column);
     }
     $entry->set($self->gsns, 'data', $data);
-
     return $entry;
 };
 

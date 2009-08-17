@@ -57,7 +57,47 @@ my $previous_table_count = scalar @t;
     my @t = $ss->tables;
     is scalar @t, $previous_table_count;
 }
-
 ok $ws->delete, 'delete worksheet';
+
+for my $mode (qw(overwrite insert)) {
+    ok my $ws2 = $ss->add_worksheet(
+        {
+            title => 'insertion mode test '.scalar localtime,
+            col_count => 3,
+            row_count => 3,
+        }
+    ), 'add worksheet';
+    ok $ss->add_table(
+        {
+            title => 'foobarbaz',
+            worksheet => $ws2,
+            insertion_mode => $mode,
+            start_row => 3,
+            columns => ['foo', 'bar', 'baz'],
+        }
+    );
+    ok my $t = $ss->table({title => 'foobarbaz', worksheet => $ws2->title});
+    isa_ok $t, 'Net::Google::Spreadsheets::Table';
+    is $t->title, 'foobarbaz', 'table title';
+    is $t->worksheet, $ws2->title, 'worksheet name';
+    is $t->insertion_mode, $mode, 'insertion mode';
+    is $t->start_row, 3, 'start row';
+    my @c = @{$t->columns};
+    is scalar @c, 3, 'column count is 3';
+    ok grep({$_->name eq 'foo' && $_->index eq 'A'} @c), 'column foo exists';
+    ok grep({$_->name eq 'bar' && $_->index eq 'B'} @c), 'column bar exists';
+    ok grep({$_->name eq 'baz' && $_->index eq 'C'} @c), 'column baz exists';
+    for my $i (1 .. 3) {
+        ok $t->add_record(
+            {
+                foo => 1,
+                bar => 2,
+                baz => 3,
+            }
+        );
+        is $t->num_rows, $i;
+    }
+    ok $ws2->delete;
+}
 
 done_testing;

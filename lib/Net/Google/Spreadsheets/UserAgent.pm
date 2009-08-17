@@ -60,6 +60,7 @@ sub request {
     }
     my $res = eval {$self->ua->request($req)};
     if ($@ || !$res->is_success) {
+        warn $res->content;
         die sprintf("request for '%s' failed: %s", $uri, $@ || $res->status_line);
     }
     my $type = $res->content_type;
