@@ -66,7 +66,9 @@ has summary => ( is => 'rw', isa => 'Str' );
 has worksheet => ( is => 'ro', isa => 'WorksheetName', coerce => 1 );
 has header => ( is => 'ro', isa => 'Int', required => 1, default => 1 ); 
 has start_row => ( is => 'ro', isa => 'Int', required => 1, default => 2 );
+has num_rows => ( is => 'ro', isa => 'Int' );
 has columns => ( is => 'ro', isa => 'ColumnList', coerce => 1 );
+has insertion_mode => ( is => 'ro', isa => 'Str', default => 'insert' );
 
 after from_atom => sub {
     my ($self) = @_;
@@ -77,6 +79,9 @@ after from_atom => sub {
     $self->{header} = first( $elem, $gsns, 'header')->getAttribute('row');
     my @columns;
     my $data = first($elem, $gsns, 'data');
+    $self->{insertion_mode} = $data->getAttribute('insertionMode');
+    $self->{start_row} = $data->getAttribute('startRow');
+    $self->{num_rows} = $data->getAttribute('numRows');
     for (nodelist($data, $gsns, 'column')) {
         push @columns, Net::Google::Spreadsheets::Column->new(
             index => $_->getAttribute('index'),
@@ -92,15 +97,17 @@ around to_atom => sub {
     $entry->summary($self->summary) if $self->summary;
     $entry->set($self->gsns, 'worksheet', '', {name => $self->worksheet});
     $entry->set($self->gsns, 'header', '', {row => $self->header});
-    my $columns = create_element($self->gsns, 'data');
-    $columns->setAttribute(startRow => $self->start_row);
+    my $data = create_element($self->gsns, 'data');
+    $data->setAttribute(startRow => $self->start_row);
+    $data->setAttribute(insertionMode => $self->insertion_mode);
+    $data->setAttribute(startRow => $self->start_row) if $self->start_row;
     for ( @{$self->columns} ) {
         my $column = create_element($self->gsns, 'column');
         $column->setAttribute(index => $_->index);
         $column->setAttribute(name => $_->name);
-        $columns->appendChild($column);
+        $data->appendChild($column);
     }
-    $entry->set($self->gsns, 'data', $columns);
+    $entry->set($self->gsns, 'data', $data);
 
     return $entry;
 };
@@ -111,15 +118,8 @@ package # hide from PAUSE
     Net::Google::Spreadsheets::Column;
 use Moose;
 
-has index => (
-    is => 'ro',
-    isa => 'Str',
-);
-
-has name => (
-    is => 'ro',
-    isa => 'Str',
-);
+has 'index' => ( is => 'ro', isa => 'Str' );
+has 'name' => ( is => 'ro', isa => 'Str' );
 
 __PACKAGE__->meta->make_immutable;
 

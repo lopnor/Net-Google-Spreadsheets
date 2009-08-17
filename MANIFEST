@@ -22,6 +22,8 @@ inc/Test/More.pm
 lib/Net/Google/Spreadsheets.pm
 lib/Net/Google/Spreadsheets/Base.pm
 lib/Net/Google/Spreadsheets/Cell.pm
+lib/Net/Google/Spreadsheets/Record.pm
+lib/Net/Google/Spreadsheets/Role/HasContent.pm
 lib/Net/Google/Spreadsheets/Row.pm
 lib/Net/Google/Spreadsheets/Spreadsheet.pm
 lib/Net/Google/Spreadsheets/Table.pm
@@ -34,11 +36,12 @@ META.yml
 README
 t/00_compile.t
 t/01_instanciate.t
-t/02_spreadsheets.t
+t/02_spreadsheet.t
 t/03_worksheet.t
 t/04_cell.t
-t/05_rows.t
+t/05_row.t
 t/06_table.t
+t/07_record.t
 t/08_error.t
 t/Util.pm
 xt/01_podspell.t
