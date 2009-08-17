@@ -183,7 +183,7 @@ Set 'true' or 'false'. The default is 'false'.
 
 =back
 
-See L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html#ListParameters> for details.
+See L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html#ListParameters> for details.
 
 =head2 row(\%condition)
 
@@ -209,7 +209,7 @@ Returns a list of Net::Google::Spreadsheets::Cell objects. Acceptable arguments 
 
 =back
 
-See L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html#CellParameters> for details.
+See L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html#CellParameters> for details.
 
 =head2 cell(\%args)
 
@@ -239,9 +239,9 @@ update multiple cells with a batch request. Pass a list of hash references conta
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
 
 L<Net::Google::AuthSub>
 

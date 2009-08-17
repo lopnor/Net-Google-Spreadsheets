@@ -104,9 +104,9 @@ Creates new worksheet and returns a Net::Google::Spreadsheets::Worksheet object 
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
 
 L<Net::Google::AuthSub>
 

@@ -123,6 +123,27 @@ Space characters in hash key of rows will be removed when you access rows. See b
     }
   );
 
+Instead, Net::Google::Spreadsheets::Table and Net::Google::Spreadsheets::Record allows 
+space characters in column name. 
+
+  my $s = Net::Google::Spreadsheets->new(
+    username => 'me@gmail.com', 
+    password => 'foobar'
+  )->spreadsheet({titile => 'sample'});
+
+  my $t = $s->add_table(
+    {
+        worksheet => $s->worksheet(1),
+        columns => ['name', 'mail address'],
+    }
+  );
+  $t->add_record(
+    {
+        name => 'my name',
+        'mail address' => 'me@gmail.com',
+    }
+  );
+
 =head1 ATTRIBUTES
 
 =head2 content
@@ -131,9 +152,9 @@ Rewritable attribute. You can get and set the value.
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
 
 L<Net::Google::AuthSub>
 

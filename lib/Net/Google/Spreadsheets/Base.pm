@@ -132,9 +132,9 @@ Net::Google::Spreadsheets::Base - Base class of Net::Google::Spreadsheets::*.
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/developers_guide_protocol.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/2.0/reference.html>
+L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
 
 L<Net::Google::AuthSub>
 

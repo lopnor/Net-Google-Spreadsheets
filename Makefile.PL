@@ -20,4 +20,5 @@ build_requires 'Test::MockModule';
 build_requires 'Test::MockObject';
 use_test_base;
 auto_include;
+auto_set_repository;
 WriteAll;
