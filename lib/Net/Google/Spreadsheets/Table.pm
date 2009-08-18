@@ -4,6 +4,8 @@ use Moose::Util::TypeConstraints;
 use namespace::clean -except => 'meta';
 use XML::Atom::Util qw(nodelist first create_element);
 
+with 'Net::Google::Spreadsheets::Role::Base';
+
 subtype 'ColumnList'
     => as 'ArrayRef[Net::Google::Spreadsheets::Table::Column]';
 coerce 'ColumnList'
@@ -45,7 +47,6 @@ coerce 'WorksheetName'
         $_->title
     };
 
-extends 'Net::Google::Spreadsheets::Base';
 
 has record_feed => (
     traits => ['Net::Google::Spreadsheets::Traits::Feed'],

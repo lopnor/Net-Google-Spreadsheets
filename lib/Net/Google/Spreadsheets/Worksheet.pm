@@ -3,9 +3,10 @@ use Moose;
 use Carp;
 use namespace::clean -except => 'meta';
 
-extends 'Net::Google::Spreadsheets::Base';
+with 'Net::Google::Spreadsheets::Role::Base';
 
 use Net::Google::Spreadsheets::Cell;
+use XML::Atom::Util qw(first);
 
 has row_feed => (
     traits => ['Net::Google::Spreadsheets::Traits::Feed'],
@@ -102,7 +103,7 @@ sub batchupdate_cell {
             container => $self,
         )
     } grep {
-        my $node = XML::Atom::Util::first(
+        my $node = first(
             $_->elem, $self->batchns->{uri}, 'status'
         );
         $node->getAttribute('code') == 200;

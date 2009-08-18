@@ -3,17 +3,11 @@ use Moose;
 use namespace::clean -except => 'meta';
 use 5.008001;
 
-extends 'Net::Google::Spreadsheets::Base';
-
-use Carp;
-use Net::Google::AuthSub;
-use Net::Google::Spreadsheets::UserAgent;
+with 
+    'Net::Google::Spreadsheets::Role::Base',
+    'Net::Google::Spreadsheets::Role::Service';
 
 our $VERSION = '0.06_01';
-
-BEGIN {
-    $XML::Atom::DefaultVersion = 1;
-}
 
 has spreadsheet_feed => (
     traits => ['Net::Google::Spreadsheets::Traits::Feed'],
@@ -23,51 +17,11 @@ has spreadsheet_feed => (
     entry_class => 'Net::Google::Spreadsheets::Spreadsheet',
 );
 
-sub _build_service {return $_[0]}
-
-has source => (
-    isa => 'Str',
-    is => 'ro',
-    required => 1,
-    default => sub { __PACKAGE__.'-'.$VERSION },
-);
-
-has username => ( isa => 'Str', is => 'ro', required => 1 );
-has password => ( isa => 'Str', is => 'ro', required => 1 );
-
-has ua => (
-    isa => 'Net::Google::Spreadsheets::UserAgent',
-    is => 'ro',
-    handles => [qw(request feed entry post put)],
-    required => 1,
-    lazy_build => 1,
-);
-
-sub _build_ua {
-    my $self = shift;
-    my $authsub = Net::Google::AuthSub->new(
-        service => 'wise',
-        source => $self->source,
-    );
-    my $res = $authsub->login(
-        $self->username,
-        $self->password,
-    );
-    unless ($res && $res->is_success) {
-        croak 'Net::Google::AuthSub login failed';
-    } 
-    return Net::Google::Spreadsheets::UserAgent->new(
-        source => $self->source,
-        auth => $res->auth,
-    );
-}
-
 __PACKAGE__->meta->make_immutable;
 
-sub BUILD {
-    my ($self) = @_;
-    $self->ua; #check if login ok?
-}
+sub _build_service {return $_[0]}
+
+sub _build_source { return __PACKAGE__. '-' . $VERSION }
 
 1;
 __END__

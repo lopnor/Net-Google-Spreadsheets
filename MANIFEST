@@ -7,7 +7,6 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
-inc/Module/Install/Repository.pm
 inc/Module/Install/TestBase.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
@@ -21,10 +20,11 @@ inc/Test/MockModule.pm
 inc/Test/MockObject.pm
 inc/Test/More.pm
 lib/Net/Google/Spreadsheets.pm
-lib/Net/Google/Spreadsheets/Base.pm
 lib/Net/Google/Spreadsheets/Cell.pm
 lib/Net/Google/Spreadsheets/Record.pm
+lib/Net/Google/Spreadsheets/Role/Base.pm
 lib/Net/Google/Spreadsheets/Role/HasContent.pm
+lib/Net/Google/Spreadsheets/Role/Service.pm
 lib/Net/Google/Spreadsheets/Row.pm
 lib/Net/Google/Spreadsheets/Spreadsheet.pm
 lib/Net/Google/Spreadsheets/Table.pm

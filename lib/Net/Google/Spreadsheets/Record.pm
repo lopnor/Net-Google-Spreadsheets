@@ -3,8 +3,9 @@ use Moose;
 use namespace::clean -except => 'meta';
 use XML::Atom::Util qw(nodelist);
 
-extends 'Net::Google::Spreadsheets::Base';
-with 'Net::Google::Spreadsheets::Role::HasContent';
+with 
+    'Net::Google::Spreadsheets::Role::Base',
+    'Net::Google::Spreadsheets::Role::HasContent';
 
 after from_atom => sub {
     my ($self) = @_;

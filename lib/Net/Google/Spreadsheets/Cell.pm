@@ -3,7 +3,7 @@ use Moose;
 use namespace::clean -except => 'meta';
 use XML::Atom::Util qw(first);
 
-extends 'Net::Google::Spreadsheets::Base';
+with 'Net::Google::Spreadsheets::Role::Base';
 
 has content => (
     isa => 'Str',

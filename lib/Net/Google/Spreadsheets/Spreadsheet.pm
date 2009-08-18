@@ -2,9 +2,8 @@ package Net::Google::Spreadsheets::Spreadsheet;
 use Moose;
 use namespace::clean -except => 'meta';
 
-extends 'Net::Google::Spreadsheets::Base';
+with 'Net::Google::Spreadsheets::Role::Base';
 
-use Net::Google::Spreadsheets::Worksheet;
 use Path::Class;
 use URI;
 

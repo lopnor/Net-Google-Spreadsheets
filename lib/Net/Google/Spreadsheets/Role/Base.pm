@@ -1,5 +1,5 @@
-package Net::Google::Spreadsheets::Base;
-use Moose;
+package Net::Google::Spreadsheets::Role::Base;
+use Moose::Role;
 use namespace::clean -except => 'meta';
 use Carp;
 
@@ -67,11 +67,9 @@ has etag => (
 );
 
 has container => (
-    isa => 'Maybe[Net::Google::Spreadsheets::Base]',
+    isa => 'Maybe[Net::Google::Spreadsheets::Role::Base]',
     is => 'ro',
 );
-
-__PACKAGE__->meta->make_immutable;
 
 sub from_atom {
     my ($self) = @_;
@@ -86,6 +84,7 @@ sub from_atom {
 
 sub to_atom {
     my ($self) = @_;
+    $XML::Atom::DefaultVersion = 1;
     my $entry = XML::Atom::Entry->new;
     $entry->title($self->title) if $self->title;
     return $entry;
@@ -124,25 +123,5 @@ sub delete {
 }
 
 1;
+
 __END__
-
-=head1 NAME
-
-Net::Google::Spreadsheets::Base - Base class of Net::Google::Spreadsheets::*.
-
-=head1 SEE ALSO
-
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
-
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
-
-L<Net::Google::AuthSub>
-
-L<Net::Google::Spreadsheets>
-
-=head1 AUTHOR
-
-Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
-
-=cut
-

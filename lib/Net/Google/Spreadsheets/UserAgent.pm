@@ -3,8 +3,6 @@ use Moose;
 use namespace::clean -except => 'meta';
 use Carp;
 use LWP::UserAgent;
-use HTTP::Headers;
-use HTTP::Request;
 use URI;
 use XML::Atom::Entry;
 use XML::Atom::Feed;
@@ -59,8 +57,17 @@ sub request {
         }
     }
     my $res = eval {$self->ua->request($req)};
+    if ($ENV{DEBUG}) {
+        warn $res->request->as_string;
+        warn $res->as_string;
+    }
     if ($@ || !$res->is_success) {
-        die sprintf("request for '%s' failed:\n\t%s\n\t%s\n\t", $uri, ($@ || $res->status_line), ($! || $res->content));
+        die sprintf(
+            "request for '%s' failed:\n\t%s\n\t%s\n\t", 
+            $uri, 
+            $@ || $res->status_line,
+            $! || $res->content
+        );
     }
     my $type = $res->content_type;
     if ($res->content_length && $type !~ m{^application/atom\+xml}) {
