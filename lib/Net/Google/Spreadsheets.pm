@@ -7,7 +7,7 @@ with
     'Net::Google::Spreadsheets::Role::Base',
     'Net::Google::Spreadsheets::Role::Service';
 
-our $VERSION = '0.06_01';
+our $VERSION = '0.06';
 
 has spreadsheet_feed => (
     traits => ['Net::Google::Spreadsheets::Traits::Feed'],

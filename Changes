@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.06    Thu Aug 20 23:21:35 2009
+        - Refactored internals
+
 0.06_01 Mon Arg 16 16:01:27 2009
         - Supports Google Spreadsheets API version 3.0
         - Add table and record feeds supports
