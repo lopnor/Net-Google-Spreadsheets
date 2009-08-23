@@ -10,7 +10,7 @@ ok my $spreadsheet = spreadsheet, 'getting spreadsheet';
 }
 
 my $args = {
-    title => 'new worksheet',
+    title => 'new worksheet '. scalar localtime,
     row_count => 10,
     col_count => 3,
 };
@@ -36,7 +36,7 @@ my $args = {
     is $ws->row_count, $args->{row_count};
     is $ws->col_count, $args->{col_count};
 
-    $args->{title} = "title changed";
+    $args->{title} = "title changed " .scalar localtime;
     ok $ws->title($args->{title}), "changing title to $args->{title}";
     is $ws->title, $args->{title};
     is $ws->atom->title, $args->{title};
@@ -45,10 +45,10 @@ my $args = {
         my $col_count = $ws->col_count + 1;
         my $row_count = $ws->row_count + 1;
         is $ws->col_count($col_count), $col_count, "changing col_count to $col_count";
-        is $ws->atom->get($ws->gsns, 'colCount'), $col_count;
+        is $ws->atom->get($ws->service->ns('gs'), 'colCount'), $col_count;
         is $ws->col_count, $col_count;
         is $ws->row_count($row_count), $row_count, "changing row_count to $row_count";
-        is $ws->atom->get($ws->gsns, 'rowCount'), $row_count;
+        is $ws->atom->get($ws->service->ns('gs'), 'rowCount'), $row_count;
         is $ws->row_count, $row_count;
     }
 }

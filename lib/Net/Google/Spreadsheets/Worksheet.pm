@@ -1,38 +1,28 @@
 package Net::Google::Spreadsheets::Worksheet;
 use Moose;
-use Carp;
 use namespace::clean -except => 'meta';
+use Net::Google::GData;
 
-with 'Net::Google::Spreadsheets::Role::Base';
+with 'Net::Google::GData::Role::Entry';
 
+use Carp;
 use Net::Google::Spreadsheets::Cell;
 use XML::Atom::Util qw(first);
 
-has row_feed => (
-    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
-    is => 'ro',
-    isa => 'Str',
+feedurl row => (
     entry_class => 'Net::Google::Spreadsheets::Row',
-    entry_arg_builder => sub {
+    as_content_src => 1,
+    arg_builder => sub {
         my ($self, $args) = @_;
         return {content => $args};
     },
-    from_atom => sub {
-        my $self = shift;
-        $self->{row_feed} = $self->atom->content->elem->getAttribute('src');
-    },
 );
 
-has cellsfeed => (
-    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
-    is => 'ro',
-    isa => 'Str',
+feedurl cell => (
     entry_class => 'Net::Google::Spreadsheets::Cell',
-    entry_arg_builder => sub {
-        my ($self, $args) = @_;
-        croak 'you can\'t call add_cell!';
-    },
-    query_arg_builder => sub {
+    can_add => 0,
+    rel => 'http://schemas.google.com/spreadsheets/2006#cellsfeed',
+    query_builder => sub {
         my ($self, $args) = @_;
         if (my $col = delete $args->{col}) {
             $args->{'max-col'} = $col;
@@ -46,12 +36,7 @@ has cellsfeed => (
         }
         return $args;
     },
-    from_atom => sub {
-        my ($self) = @_;
-        ($self->{cellsfeed}) = map {$_->href} grep {
-            $_->rel eq 'http://schemas.google.com/spreadsheets/2006#cellsfeed'
-        } $self->atom->link;
-    }
+
 );
 
 has row_count => (
@@ -71,15 +56,15 @@ has col_count => (
 around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    $entry->set($self->gsns, 'rowCount', $self->row_count);
-    $entry->set($self->gsns, 'colCount', $self->col_count);
+    $entry->set($self->service->ns('gs'), 'rowCount', $self->row_count);
+    $entry->set($self->service->ns('gs'), 'colCount', $self->col_count);
     return $entry;
 };
 
 after from_atom => sub {
     my ($self) = @_;
-    $self->{row_count} = $self->atom->get($self->gsns, 'rowCount');
-    $self->{col_count} = $self->atom->get($self->gsns, 'colCount');
+    $self->{row_count} = $self->atom->get($self->service->ns('gs'), 'rowCount');
+    $self->{col_count} = $self->atom->get($self->service->ns('gs'), 'colCount');
 };
 
 __PACKAGE__->meta->make_immutable;
@@ -91,11 +76,15 @@ sub batchupdate_cell {
         my $id = sprintf("%s/R%sC%s",$self->cellsfeed, $_->{row}, $_->{col});
         $_->{id} = $_->{editurl} = $id;
         my $entry = Net::Google::Spreadsheets::Cell->new($_)->to_atom;
-        $entry->set($self->batchns, operation => '', {type => 'update'});
-        $entry->set($self->batchns, id => $id);
+        $entry->set($self->service->ns('batch'), operation => '', {type => 'update'});
+        $entry->set($self->service->ns('batch'), id => $id);
         $feed->add_entry($entry);
     }
-    my $res_feed = $self->service->post($self->cellsfeed."/batch", $feed, {'If-Match' => '*'});
+    my $res_feed = $self->service->post(
+        $self->cellsfeed."/batch", 
+        $feed, 
+        {'If-Match' => '*'}
+    );
     $self->sync;
     return map {
         Net::Google::Spreadsheets::Cell->new(
@@ -104,7 +93,7 @@ sub batchupdate_cell {
         )
     } grep {
         my $node = first(
-            $_->elem, $self->batchns->{uri}, 'status'
+            $_->elem, $self->service->ns('batch')->{uri}, 'status'
         );
         $node->getAttribute('code') == 200;
     } $res_feed->entries;

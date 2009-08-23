@@ -24,7 +24,7 @@ feedurl worksheet => (
 
 feedurl table => (
     entry_class => 'Net::Google::Spreadsheets::Table',
-    rel => 'http://schemas.google.com/spreadsheets/2006#tablefeed',
+    rel => 'http://schemas.google.com/spreadsheets/2006#tablesfeed',
 );
 
 after from_atom => sub {

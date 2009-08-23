@@ -9,6 +9,7 @@ requires 'Crypt::SSLeay';
 requires 'LWP::UserAgent';
 requires 'URI';
 requires 'Moose' => 0.34;
+requires 'MooseX::Role::Parameterized';
 requires 'Path::Class';
 
 tests 't/*.t';
