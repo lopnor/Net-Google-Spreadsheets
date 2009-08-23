@@ -1,8 +1,9 @@
 package Net::Google::Spreadsheets::Spreadsheet;
 use Moose;
 use namespace::clean -except => 'meta';
+use Net::Google::GData;
 
-with 'Net::Google::Spreadsheets::Role::Base';
+with 'Net::Google::GData::Role::Entry';
 
 use Path::Class;
 use URI;
@@ -16,30 +17,15 @@ has key => (
     is => 'ro',
 );
 
-has worksheet_feed => (
-    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
-    is => 'rw',
-    isa => 'Str',
+feedurl worksheet => (
     entry_class => 'Net::Google::Spreadsheets::Worksheet',
-    from_atom => sub {
-        my ($self) = @_;
-        $self->{worksheet_feed} = $self->atom->content->elem->getAttribute('src');
-    },
+    as_content_src => 1,
 );
 
-has table_feed => (
-    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
-    is => 'rw',
-    isa => 'Str',
+feedurl table => (
     entry_class => 'Net::Google::Spreadsheets::Table',
-    required => 1,
-    lazy_build => 1,
+    rel => 'http://schemas.google.com/spreadsheets/2006#tablefeed',
 );
-
-sub _build_table_feed {
-    my $self = shift;
-    return sprintf('http://spreadsheets.google.com/feeds/%s/tables',$self->key);
-}
 
 after from_atom => sub {
     my ($self) = @_;

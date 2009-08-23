@@ -1,27 +1,28 @@
 package Net::Google::Spreadsheets;
 use Moose;
+use Net::Google::GData;
 use namespace::clean -except => 'meta';
 use 5.008001;
 
-with 
-    'Net::Google::Spreadsheets::Role::Base',
-    'Net::Google::Spreadsheets::Role::Service';
-
 our $VERSION = '0.06';
 
-has spreadsheet_feed => (
-    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
-    is => 'ro',
-    isa => 'Str',
+with 'Net::Google::GData::Role::Service' => {
+    service => 'wise',
+    source => __PACKAGE__.'-'.$VERSION,
+    ns => {
+        gs => 'http://schemas.google.com/spreadsheets/2006',
+        gsx => 'http://schemas.google.com/spreadsheets/2006/extended',
+        batch => 'http://schemas.google.com/gdata/batch',
+    }
+};
+
+feedurl spreadsheet => (
     default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full',
     entry_class => 'Net::Google::Spreadsheets::Spreadsheet',
+    can_add => 0,
 );
 
 __PACKAGE__->meta->make_immutable;
-
-sub _build_service {return $_[0]}
-
-sub _build_source { return __PACKAGE__. '-' . $VERSION }
 
 1;
 __END__
