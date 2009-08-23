@@ -1,15 +1,16 @@
 package Net::Google::Spreadsheets::Row;
 use Moose;
 use namespace::clean -except => 'meta';
+use Net::Google::GData;
 use XML::Atom::Util qw(nodelist);
 
 with 
-    'Net::Google::Spreadsheets::Role::Base',
-    'Net::Google::Spreadsheets::Role::HasContent';
+    'Net::Google::GData::Role::Entry',
+    'Net::Google::GData::Role::HasContent';
 
 after from_atom => sub {
     my ($self) = @_;
-    for my $node (nodelist($self->elem, $self->gsxns->{uri}, '*')) {
+    for my $node (nodelist($self->elem, $self->service->ns('gsx')->{uri}, '*')) {
         $self->{content}->{$node->localname} = $node->textContent;
     }
 };
@@ -18,27 +19,12 @@ around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
     while (my ($key, $value) = each %{$self->{content}}) {
-        $entry->set($self->gsxns, $key, $value);
+        $entry->set($self->service->ns('gsx'), $key, $value);
     }
     return $entry;
 };
 
 __PACKAGE__->meta->make_immutable;
-
-sub param {
-    my ($self, $arg) = @_;
-    return $self->content unless $arg;
-    if (ref $arg && (ref $arg eq 'HASH')) {
-        return $self->content(
-            {
-                %{$self->content},
-                %$arg,
-            }
-        );
-    } else {
-        return $self->content->{$arg};
-    }
-}
 
 1;
 __END__

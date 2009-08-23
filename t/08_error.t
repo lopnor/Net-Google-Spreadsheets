@@ -25,7 +25,7 @@ throws_ok {
         username => 'foo',
         password => 'bar',
     );
-    is $service->ua->auth, 'foobar';
+    is $service->ua->default_headers->header('Authorization'), 'GoogleLogin auth=foobar';
     my $ua = Test::MockModule->new('LWP::UserAgent');
     {
         $ua->mock('request' => sub {return HTTP::Response->parse(<<'END')});

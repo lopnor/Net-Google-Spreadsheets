@@ -73,15 +73,16 @@ sub batchupdate_cell {
     my ($self, @args) = @_;
     my $feed = XML::Atom::Feed->new;
     for ( @args ) {
-        my $id = sprintf("%s/R%sC%s",$self->cellsfeed, $_->{row}, $_->{col});
+        my $id = sprintf("%s/R%sC%s",$self->cell_feedurl, $_->{row}, $_->{col});
         $_->{id} = $_->{editurl} = $id;
+        $_->{container} = $self,
         my $entry = Net::Google::Spreadsheets::Cell->new($_)->to_atom;
         $entry->set($self->service->ns('batch'), operation => '', {type => 'update'});
         $entry->set($self->service->ns('batch'), id => $id);
         $feed->add_entry($entry);
     }
     my $res_feed = $self->service->post(
-        $self->cellsfeed."/batch", 
+        $self->cell_feedurl."/batch", 
         $feed, 
         {'If-Match' => '*'}
     );

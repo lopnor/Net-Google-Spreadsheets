@@ -3,7 +3,7 @@ use Moose;
 use namespace::clean -except => 'meta';
 use XML::Atom::Util qw(first);
 
-with 'Net::Google::Spreadsheets::Role::Base';
+with 'Net::Google::GData::Role::Entry';
 
 has content => (
     isa => 'Str',
@@ -28,7 +28,7 @@ has input_value => (
 
 after from_atom => sub {
     my ($self) = @_;
-    my $elem = first( $self->elem, $self->gsns->{uri}, 'cell');
+    my $elem = first( $self->elem, $self->service->ns('gs')->{uri}, 'cell');
     $self->{row} = $elem->getAttribute('row');
     $self->{col} = $elem->getAttribute('col');
     $self->{input_value} = $elem->getAttribute('inputValue');
@@ -38,7 +38,7 @@ after from_atom => sub {
 around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    $entry->set($self->gsns, 'cell', '',
+    $entry->set($self->service->ns('gs'), 'cell', '',
         {
             row => $self->row,
             col => $self->col,

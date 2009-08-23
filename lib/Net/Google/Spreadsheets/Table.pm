@@ -2,9 +2,10 @@ package Net::Google::Spreadsheets::Table;
 use Moose;
 use Moose::Util::TypeConstraints;
 use namespace::clean -except => 'meta';
+use Net::Google::GData;
 use XML::Atom::Util qw(nodelist first create_element);
 
-with 'Net::Google::Spreadsheets::Role::Base';
+with 'Net::Google::GData::Role::Entry';
 
 subtype 'ColumnList'
     => as 'ArrayRef[Net::Google::Spreadsheets::Table::Column]';
@@ -47,20 +48,13 @@ coerce 'WorksheetName'
         $_->title
     };
 
-
-has record_feed => (
-    traits => ['Net::Google::Spreadsheets::Traits::Feed'],
-    is => 'ro',
-    isa => 'Str',
+feedurl record => (
     entry_class => 'Net::Google::Spreadsheets::Record',
-    entry_arg_builder => sub {
+    arg_builder => sub {
         my ($self, $args) = @_;
         return {content => $args};
     },
-    from_atom => sub {
-        my $self = shift;
-        $self->{record_feed} = first($self->elem, '', 'content')->getAttribute('src');
-    },
+    as_content_src => 1,
 );
 
 has summary => ( is => 'rw', isa => 'Str' );
@@ -73,7 +67,7 @@ has insertion_mode => ( is => 'ro', isa => (enum ['insert', 'overwrite']), defau
 
 after from_atom => sub {
     my ($self) = @_;
-    my $gsns = $self->gsns->{uri};
+    my $gsns = $self->service->ns('gs')->{uri};
     my $elem = $self->elem;
     $self->{summary} = $self->atom->summary;
     $self->{worksheet} = first( $elem, $gsns, 'worksheet')->getAttribute('name');
@@ -95,20 +89,21 @@ after from_atom => sub {
 around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
+    my $gsns = $self->service->ns('gs')->{uri};
     $entry->summary($self->summary) if $self->summary;
-    $entry->set($self->gsns, 'worksheet', '', {name => $self->worksheet});
-    $entry->set($self->gsns, 'header', '', {row => $self->header});
-    my $data = create_element($self->gsns, 'data');
+    $entry->set($gsns, 'worksheet', '', {name => $self->worksheet});
+    $entry->set($gsns, 'header', '', {row => $self->header});
+    my $data = create_element($gsns, 'data');
     $data->setAttribute(startRow => $self->start_row);
     $data->setAttribute(insertionMode => $self->insertion_mode);
     $data->setAttribute(startRow => $self->start_row) if $self->start_row;
     for ( @{$self->columns} ) {
-        my $column = create_element($self->gsns, 'column');
+        my $column = create_element($gsns, 'column');
         $column->setAttribute(index => $_->index);
         $column->setAttribute(name => $_->name);
         $data->appendChild($column);
     }
-    $entry->set($self->gsns, 'data', $data);
+    $entry->set($gsns, 'data', $data);
     return $entry;
 };
 
