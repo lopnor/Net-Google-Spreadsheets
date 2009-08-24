@@ -2,10 +2,10 @@ package Net::Google::Spreadsheets::Table;
 use Moose;
 use Moose::Util::TypeConstraints;
 use namespace::clean -except => 'meta';
-use Net::Google::GData;
+use Net::Google::DataAPI;
 use XML::Atom::Util qw(nodelist first create_element);
 
-with 'Net::Google::GData::Role::Entry';
+with 'Net::Google::DataAPI::Role::Entry';
 
 subtype 'ColumnList'
     => as 'ArrayRef[Net::Google::Spreadsheets::Table::Column]';

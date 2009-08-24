@@ -1,9 +1,9 @@
 package Net::Google::Spreadsheets::Spreadsheet;
 use Moose;
 use namespace::clean -except => 'meta';
-use Net::Google::GData;
+use Net::Google::DataAPI;
 
-with 'Net::Google::GData::Role::Entry';
+with 'Net::Google::DataAPI::Role::Entry';
 
 use Path::Class;
 use URI;

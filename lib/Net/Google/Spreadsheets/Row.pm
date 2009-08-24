@@ -1,12 +1,12 @@
 package Net::Google::Spreadsheets::Row;
 use Moose;
 use namespace::clean -except => 'meta';
-use Net::Google::GData;
+use Net::Google::DataAPI;
 use XML::Atom::Util qw(nodelist);
 
 with 
-    'Net::Google::GData::Role::Entry',
-    'Net::Google::GData::Role::HasContent';
+    'Net::Google::DataAPI::Role::Entry',
+    'Net::Google::DataAPI::Role::HasContent';
 
 after from_atom => sub {
     my ($self) = @_;

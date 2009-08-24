@@ -3,7 +3,7 @@ use Moose;
 use namespace::clean -except => 'meta';
 use XML::Atom::Util qw(first);
 
-with 'Net::Google::GData::Role::Entry';
+with 'Net::Google::DataAPI::Role::Entry';
 
 has content => (
     isa => 'Str',

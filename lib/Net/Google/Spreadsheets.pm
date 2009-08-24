@@ -1,12 +1,12 @@
 package Net::Google::Spreadsheets;
 use Moose;
-use Net::Google::GData;
+use Net::Google::DataAPI;
 use namespace::clean -except => 'meta';
 use 5.008001;
 
 our $VERSION = '0.06';
 
-with 'Net::Google::GData::Role::Service' => {
+with 'Net::Google::DataAPI::Role::Service' => {
     service => 'wise',
     source => __PACKAGE__.'-'.$VERSION,
     ns => {
