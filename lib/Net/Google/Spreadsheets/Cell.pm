@@ -28,7 +28,7 @@ has input_value => (
 
 after from_atom => sub {
     my ($self) = @_;
-    my $elem = first( $self->elem, $self->service->ns('gs')->{uri}, 'cell');
+    my $elem = first( $self->elem, $self->ns('gs')->{uri}, 'cell');
     $self->{row} = $elem->getAttribute('row');
     $self->{col} = $elem->getAttribute('col');
     $self->{input_value} = $elem->getAttribute('inputValue');
@@ -38,7 +38,7 @@ after from_atom => sub {
 around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    $entry->set($self->service->ns('gs'), 'cell', '',
+    $entry->set($self->ns('gs'), 'cell', '',
         {
             row => $self->row,
             col => $self->col,

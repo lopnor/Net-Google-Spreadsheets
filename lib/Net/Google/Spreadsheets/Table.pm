@@ -67,7 +67,7 @@ has insertion_mode => ( is => 'ro', isa => (enum ['insert', 'overwrite']), defau
 
 after from_atom => sub {
     my ($self) = @_;
-    my $gsns = $self->service->ns('gs')->{uri};
+    my $gsns = $self->ns('gs')->{uri};
     my $elem = $self->elem;
     $self->{summary} = $self->atom->summary;
     $self->{worksheet} = first( $elem, $gsns, 'worksheet')->getAttribute('name');
@@ -89,7 +89,7 @@ after from_atom => sub {
 around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    my $gsns = $self->service->ns('gs')->{uri};
+    my $gsns = $self->ns('gs')->{uri};
     $entry->summary($self->summary) if $self->summary;
     $entry->set($gsns, 'worksheet', '', {name => $self->worksheet});
     $entry->set($gsns, 'header', '', {row => $self->header});

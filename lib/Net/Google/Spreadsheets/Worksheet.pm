@@ -56,15 +56,15 @@ has col_count => (
 around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
-    $entry->set($self->service->ns('gs'), 'rowCount', $self->row_count);
-    $entry->set($self->service->ns('gs'), 'colCount', $self->col_count);
+    $entry->set($self->ns('gs'), 'rowCount', $self->row_count);
+    $entry->set($self->ns('gs'), 'colCount', $self->col_count);
     return $entry;
 };
 
 after from_atom => sub {
     my ($self) = @_;
-    $self->{row_count} = $self->atom->get($self->service->ns('gs'), 'rowCount');
-    $self->{col_count} = $self->atom->get($self->service->ns('gs'), 'colCount');
+    $self->{row_count} = $self->atom->get($self->ns('gs'), 'rowCount');
+    $self->{col_count} = $self->atom->get($self->ns('gs'), 'colCount');
 };
 
 __PACKAGE__->meta->make_immutable;
@@ -77,8 +77,8 @@ sub batchupdate_cell {
         $_->{id} = $_->{editurl} = $id;
         $_->{container} = $self,
         my $entry = Net::Google::Spreadsheets::Cell->new($_)->to_atom;
-        $entry->set($self->service->ns('batch'), operation => '', {type => 'update'});
-        $entry->set($self->service->ns('batch'), id => $id);
+        $entry->set($self->ns('batch'), operation => '', {type => 'update'});
+        $entry->set($self->ns('batch'), id => $id);
         $feed->add_entry($entry);
     }
     my $res_feed = $self->service->post(
@@ -94,7 +94,7 @@ sub batchupdate_cell {
         )
     } grep {
         my $node = first(
-            $_->elem, $self->service->ns('batch')->{uri}, 'status'
+            $_->elem, $self->ns('batch')->{uri}, 'status'
         );
         $node->getAttribute('code') == 200;
     } $res_feed->entries;

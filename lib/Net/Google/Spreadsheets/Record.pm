@@ -9,7 +9,7 @@ with
 
 after from_atom => sub {
     my ($self) = @_;
-    for my $node (nodelist($self->elem, $self->service->ns('gs')->{uri}, 'field')) {
+    for my $node (nodelist($self->elem, $self->ns('gs')->{uri}, 'field')) {
         $self->{content}->{$node->getAttribute('name')} = $node->textContent;
     }
 };
@@ -18,7 +18,7 @@ around to_atom => sub {
     my ($next, $self) = @_;
     my $entry = $next->($self);
     while (my ($key, $value) = each %{$self->{content}}) {
-        $entry->add($self->service->ns('gs'), 'field', $value, {name => $key});
+        $entry->add($self->ns('gs'), 'field', $value, {name => $key});
     }
     return $entry;
 };
