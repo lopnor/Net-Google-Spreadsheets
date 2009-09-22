@@ -4,7 +4,7 @@ use Net::Google::DataAPI;
 use namespace::clean -except => 'meta';
 use 5.008001;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 with 'Net::Google::DataAPI::Role::Service' => {
     service => 'wise',

@@ -8,13 +8,17 @@ with 'Net::Google::DataAPI::Role::Entry';
 use Path::Class;
 use URI;
 
-has +title => (
+has title => (
     is => 'ro',
 );
 
-has key => (
+entry_has key => (
     isa => 'Str',
     is => 'ro',
+    from_atom => sub {
+        my ($self, $atom) = @_;
+        return file(URI->new($self->id)->path)->basename;
+    },
 );
 
 feedurl worksheet => (
@@ -26,11 +30,6 @@ feedurl table => (
     entry_class => 'Net::Google::Spreadsheets::Table',
     rel => 'http://schemas.google.com/spreadsheets/2006#tablesfeed',
 );
-
-after from_atom => sub {
-    my ($self) = @_;
-    $self->{key} = file(URI->new($self->id)->path)->basename;
-};
 
 __PACKAGE__->meta->make_immutable;
 

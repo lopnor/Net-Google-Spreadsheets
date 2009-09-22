@@ -39,33 +39,21 @@ feedurl cell => (
 
 );
 
-has row_count => (
+entry_has row_count => (
     isa => 'Int',
     is => 'rw',
     default => 100,
-    trigger => sub {$_[0]->update}
+    tagname => 'rowCount',
+    ns => 'gs',
 );
 
-has col_count => (
+entry_has col_count => (
     isa => 'Int',
     is => 'rw',
     default => 20,
-    trigger => sub {$_[0]->update}
+    tagname => 'colCount',
+    ns => 'gs',
 );
-
-around to_atom => sub {
-    my ($next, $self) = @_;
-    my $entry = $next->($self);
-    $entry->set($self->ns('gs'), 'rowCount', $self->row_count);
-    $entry->set($self->ns('gs'), 'colCount', $self->col_count);
-    return $entry;
-};
-
-after from_atom => sub {
-    my ($self) = @_;
-    $self->{row_count} = $self->atom->get($self->ns('gs'), 'rowCount');
-    $self->{col_count} = $self->atom->get($self->ns('gs'), 'colCount');
-};
 
 __PACKAGE__->meta->make_immutable;
 

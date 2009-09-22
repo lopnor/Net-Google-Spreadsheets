@@ -1,5 +1,6 @@
 use t::Util;
 use Test::More;
+use Test::Exception;
 
 ok my $service = service;
 
@@ -26,6 +27,7 @@ ok my $service = service;
     isa_ok $ss2, 'Net::Google::Spreadsheets::Spreadsheet';
     is $ss2->key, $key;
     is $ss2->title, $t::Util::SPREADSHEET_TITLE;
+    throws_ok { $ss2->title('foobar') } qr{Cannot assign a value to a read-only accessor};
 }
 
 {
