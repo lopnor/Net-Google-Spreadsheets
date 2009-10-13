@@ -7,6 +7,7 @@ use 5.008001;
 our $VERSION = '0.07';
 
 with 'Net::Google::DataAPI::Role::Service' => {
+    gdata_version => '3.0',
     service => 'wise',
     source => __PACKAGE__.'-'.$VERSION,
     ns => {
@@ -21,6 +22,15 @@ feedurl spreadsheet => (
     entry_class => 'Net::Google::Spreadsheets::Spreadsheet',
     can_add => 0,
 );
+
+around spreadsheets => sub {
+    my ($next, $self, $args) = @_;
+    my @result = $next->($self, $args);
+    if (my $key = $args->{key}) {
+        @result = grep {$_->key eq $key} @result;
+    }
+    return @result;
+};
 
 __PACKAGE__->meta->make_immutable;
 

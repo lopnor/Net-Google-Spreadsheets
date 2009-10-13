@@ -4,8 +4,8 @@ all_from 'lib/Net/Google/Spreadsheets.pm';
 
 requires 'Carp';
 requires 'XML::Atom';
-requires 'Moose' => 0.34;
-requires 'Net::Google::DataAPI';
+requires 'Moose' => '0.34';
+requires 'Net::Google::DataAPI' => '0.04';
 requires 'URI';
 requires 'Path::Class';
 
