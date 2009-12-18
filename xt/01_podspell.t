@@ -19,3 +19,6 @@ sq
 rewritable
 param
 com
+oauth
+AuthSub
+auth

@@ -241,6 +241,39 @@ http://spreadsheets.google.com/ccc?key=key
 
 Returns first item of spreadsheets(\%condition) if available.
 
+=head1 AUTHORIZATIONS
+
+you can optionally pass auth object argument when initializing
+Net::Google::Spreadsheets instance.
+
+If you want to use AuthSub mechanism, make Net::Google::DataAPI::Auth::AuthSub
+object and path it to the constructor:
+
+  my $authsub = Net::Google::AuthSub->new;
+  $authsub->auth(undef, $session_token);
+  my $auth = Net::Google::DataAPI::Auth::AuthSub->new( 
+    authsub => $authsub
+  );
+
+  my $service = Net::Google::Spreadsheet->new(
+    auth => $auth
+  );
+
+In OAuth case, like this:
+
+  my $oauth = Net::Google::DataAPI::Auth::OAuth->new(
+    consumer_key => 'consumer.example.com',
+    consumer_secret => 'mys3cr3t',
+    callback => 'http://consumer.example.com/callback',
+  );
+  $oauth->get_request_token;
+  my $url = $oauth->get_authorize_token_url;
+  # show the url to the user and get the $verifier value
+  $oauth->get_access_token({verifier => $verifier});
+  my $service = Net::Google::Spreadsheet->new(
+    auth => $oauth
+  );
+
 =head1 TESTING
 
 To test this module, you have to prepare as below.
@@ -290,6 +323,10 @@ L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_pro
 L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
 
 L<Net::Google::AuthSub>
+
+L<Net::Google::DataAPI>
+
+L<Net::OAuth>
 
 L<Net::Google::Spreadsheets::Spreadsheet>
 
