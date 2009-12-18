@@ -1,6 +1,6 @@
 package Net::Google::Spreadsheets::Spreadsheet;
-use Moose;
-use namespace::clean -except => 'meta';
+use Any::Moose;
+use namespace::autoclean;
 use Net::Google::DataAPI;
 
 with 'Net::Google::DataAPI::Role::Entry';

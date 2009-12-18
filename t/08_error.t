@@ -17,22 +17,24 @@ throws_ok {
 {
     my $res = Test::MockObject->new;
     $res->mock(is_success => sub {return 1});
-    $res->mock(auth => sub {return 'foobar'});
     my $auth = Test::MockModule->new('Net::Google::AuthSub');
     $auth->mock('login' => sub {return $res});
+    $auth->mock(auth_params => sub {return (Authorization => 'GoogleLogin auth="foobar"')});
 
     ok my $service = Net::Google::Spreadsheets->new(
         username => 'foo',
         password => 'bar',
     );
-    is $service->ua->default_headers->header('Authorization'), 'GoogleLogin auth=foobar';
     my $ua = Test::MockModule->new('LWP::UserAgent');
     {
-        $ua->mock('request' => sub {return HTTP::Response->parse(<<'END')});
-302 Found
-Location: http://www.google.com/
-
-END
+        $ua->mock('request' => sub {
+                my ($self, $req) = @_;
+                is $req->header('Authorization'), 'GoogleLogin auth="foobar"';
+                my $res = HTTP::Response->new(302); 
+                $res->header(Location => 'http://www.google.com/');
+                return $res;
+            }
+        );
         throws_ok {
             $service->spreadsheets;
         } qr{302 Found};

@@ -1,6 +1,6 @@
 package Net::Google::Spreadsheets::Cell;
-use Moose;
-use namespace::clean -except => 'meta';
+use Any::Moose;
+use namespace::autoclean;
 use XML::Atom::Util qw(first);
 
 with 'Net::Google::DataAPI::Role::Entry';

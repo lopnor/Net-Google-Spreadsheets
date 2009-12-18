@@ -1,7 +1,7 @@
 package Net::Google::Spreadsheets::Table;
-use Moose;
-use Moose::Util::TypeConstraints;
-use namespace::clean -except => 'meta';
+use Any::Moose;
+use Any::Moose '::Util::TypeConstraints';
+use namespace::autoclean;
 use Net::Google::DataAPI;
 use XML::Atom::Util qw(nodelist first create_element);
 
@@ -111,7 +111,7 @@ __PACKAGE__->meta->make_immutable;
 
 package # hide from PAUSE
     Net::Google::Spreadsheets::Table::Column;
-use Moose;
+use Any::Moose;
 
 has 'index' => ( is => 'ro', isa => 'Str' );
 has 'name' => ( is => 'ro', isa => 'Str' );

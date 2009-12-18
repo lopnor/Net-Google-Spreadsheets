@@ -1,21 +1,45 @@
 package Net::Google::Spreadsheets;
-use Moose;
+use Any::Moose;
 use Net::Google::DataAPI;
-use namespace::clean -except => 'meta';
+use namespace::autoclean;
 use 5.008001;
+use Net::Google::AuthSub;
+use Net::Google::DataAPI::Auth::AuthSub;
 
 our $VERSION = '0.07';
 
-with 'Net::Google::DataAPI::Role::Service' => {
-    gdata_version => '3.0',
-    service => 'wise',
-    source => __PACKAGE__.'-'.$VERSION,
-    ns => {
-        gs => 'http://schemas.google.com/spreadsheets/2006',
-        gsx => 'http://schemas.google.com/spreadsheets/2006/extended',
-        batch => 'http://schemas.google.com/gdata/batch',
+with 'Net::Google::DataAPI::Role::Service';
+has '+gdata_version' => (default => '3.0');
+has '+namespaces' => (
+    default => sub {
+        {
+            gs => 'http://schemas.google.com/spreadsheets/2006',
+            gsx => 'http://schemas.google.com/spreadsheets/2006/extended',
+            batch => 'http://schemas.google.com/gdata/batch',
+        }
+    },
+);
+
+has username => (is => 'ro', isa => 'Str');
+has password => (is => 'ro', isa => 'Str');
+has account_type => (is => 'ro', isa => 'Str', required => 1, default => 'HOSTED_OR_GOOGLE');
+has source => (is => 'ro', isa => 'Str', required => 1, default => __PACKAGE__ . '-' . $VERSION);
+
+sub _build_auth {
+    my ($self) = @_;
+    my $authsub = Net::Google::AuthSub->new(
+        source => $self->source,
+        service => 'wise',
+        account_type => $self->account_type,
+    );
+    my $res = $authsub->login( $self->username, $self->password );
+    unless ($res && $res->is_success) {
+        die 'Net::Google::AuthSub login failed';
     }
-};
+    return Net::Google::DataAPI::Auth::AuthSub->new(
+        authsub => $authsub,
+    );
+}
 
 feedurl spreadsheet => (
     default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full',
@@ -31,6 +55,11 @@ around spreadsheets => sub {
     }
     return @result;
 };
+
+sub BUILD {
+    my $self = shift;
+    $self->auth;
+}
 
 __PACKAGE__->meta->make_immutable;
 
