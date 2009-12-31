@@ -10,6 +10,8 @@ use URI;
 
 has title => (
     is => 'ro',
+    isa => 'Str',
+    lazy_build => 1,
 );
 
 entry_has key => (
