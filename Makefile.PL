@@ -5,7 +5,7 @@ all_from 'lib/Net/Google/Spreadsheets.pm';
 requires 'Carp';
 requires 'XML::Atom';
 requires 'Net::Google::AuthSub';
-requires 'Net::Google::DataAPI' => '0.09';
+requires 'Net::Google::DataAPI' => '0.11';
 requires 'URI';
 requires 'Path::Class';
 requires 'namespace::autoclean';

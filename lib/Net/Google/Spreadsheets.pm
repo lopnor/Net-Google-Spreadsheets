@@ -6,11 +6,17 @@ use 5.008001;
 use Net::Google::AuthSub;
 use Net::Google::DataAPI::Auth::AuthSub;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 with 'Net::Google::DataAPI::Role::Service';
-has '+gdata_version' => (default => '3.0');
-has '+namespaces' => (
+has gdata_version => (
+    is => 'ro',
+    isa => 'Str',
+    default => '3.0'
+);
+has namespaces => (
+    is => 'ro',
+    isa => 'HashRef',
     default => sub {
         {
             gs => 'http://schemas.google.com/spreadsheets/2006',
@@ -251,12 +257,9 @@ object and path it to the constructor:
 
   my $authsub = Net::Google::AuthSub->new;
   $authsub->auth(undef, $session_token);
-  my $auth = Net::Google::DataAPI::Auth::AuthSub->new( 
-    authsub => $authsub
-  );
 
   my $service = Net::Google::Spreadsheet->new(
-    auth => $auth
+    auth => $authsub
   );
 
 In OAuth case, like this:

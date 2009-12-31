@@ -1,5 +1,9 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.08    Thu Dec 31 19:20:30 2009
+        - follow Net::Google::DataAPI changes
+        - update POD
+
 0.07    Fri Dec 22 22:53:34 2009
         - now uses Net::Google::DataAPI
         - AuthSub and OAuth support via Net::Google::DataAPI
