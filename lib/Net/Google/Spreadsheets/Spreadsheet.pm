@@ -5,7 +5,6 @@ use Net::Google::DataAPI;
 
 with 'Net::Google::DataAPI::Role::Entry';
 
-use Path::Class;
 use URI;
 
 has title => (
@@ -19,7 +18,10 @@ entry_has key => (
     is => 'ro',
     from_atom => sub {
         my ($self, $atom) = @_;
-        return file(URI->new($self->id)->path)->basename;
+        my ($link) = grep {
+            $_->rel eq 'alternate' && $_->type eq 'text/html'
+        } $atom->link;
+        return {URI->new($link->href)->query_form}->{key};
     },
 );
 

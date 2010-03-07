@@ -7,7 +7,6 @@ requires 'XML::Atom';
 requires 'Net::Google::AuthSub';
 requires 'Net::Google::DataAPI' => '0.11';
 requires 'URI';
-requires 'Path::Class';
 requires 'namespace::autoclean';
 requires_any_moose(
     moose => '0.56',
