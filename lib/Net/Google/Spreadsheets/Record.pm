@@ -82,12 +82,19 @@ Net::Google::Spreadsheets::Record - A representation class for Google Spreadshee
 
   my $hashref2 = $record->param;
   # same as $record->content;
+  
+  # delete a record
+  $record->delete;
 
 =head1 METHODS
 
 =head2 param
 
 sets and gets content value.
+
+=head2 delete
+
+deletes the record.
 
 =head1 ATTRIBUTES
 

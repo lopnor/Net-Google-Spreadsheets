@@ -83,11 +83,18 @@ Net::Google::Spreadsheets::Row - A representation class for Google Spreadsheet r
   my $hashref2 = $row->param;
   # same as $row->content;
 
+  # delete the row
+  $row->delete;
+
 =head1 METHODS
 
 =head2 param
 
 sets and gets content value.
+
+=head2 delete
+
+deletes the row.
 
 =head1 CAVEATS
 

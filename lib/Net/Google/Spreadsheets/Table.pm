@@ -170,17 +170,17 @@ Net::Google::Spreadsheets::Table - A representation class for Google Spreadsheet
 
 Returns a list of Net::Google::Spreadsheets::Record objects. Acceptable arguments are:
 
-=over 4
+=over 2
 
-=item sq
+=item * sq
 
 Structured query on the full text in the worksheet. see the URL below for detail.
 
-=item orderby
+=item * orderby
 
 Set column name to use for ordering.
 
-=item reverse
+=item * reverse
 
 Set 'true' or 'false'. The default is 'false'.
 

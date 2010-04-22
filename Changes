@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.11    Thu Apr 22 16:10:00 2010
+        - added documentation on deleteing items (thanks to siguc)
+
 0.10    Mon Mar 15 23:49:00 2010
         - update dependencies (Mouse 0.51, Net::Google::DataAPI 0.17)
 

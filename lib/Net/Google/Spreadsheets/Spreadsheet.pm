@@ -104,11 +104,11 @@ Net::Google::Spreadsheets::Spreadsheet - Representation of spreadsheet.
 
 Returns a list of Net::Google::Spreadsheets::Worksheet objects. Acceptable arguments are:
 
-=over 4
+=over 2
 
-=item title
+=item * title
 
-=item title-exact
+=item * title-exact
 
 =back
 
@@ -121,13 +121,13 @@ Returns first item of worksheets(\%condition) if available.
 Creates new worksheet and returns a Net::Google::Spreadsheets::Worksheet object representing it. 
 Arguments (all optional) are:
 
-=over 4
+=over 2
 
-=item title
+=item * title
 
-=item col_count
+=item * col_count
 
-=item row_count
+=item * row_count
 
 =back
 
@@ -135,11 +135,11 @@ Arguments (all optional) are:
 
 Returns a list of Net::Google::Spreadsheets::Table objects. Acceptable arguments are:
 
-=over 4
+=over 2
 
-=item title
+=item * title
 
-=item title-exact
+=item * title-exact
 
 =back
 
@@ -152,29 +152,29 @@ Returns first item of tables(\%condition) if available.
 Creates new table and returns a Net::Google::Spreadsheets::Table object representing it.
 Arguments are:
 
-=over 4
+=over 2
 
-=item title (optional)
+=item * title (optional)
 
-=item summary (optional)
+=item * summary (optional)
 
-=item worksheet
+=item * worksheet
 
 Worksheet where the table lives. worksheet instance or the title.
 
-=item header (optional, default = 1)
+=item * header (optional, default = 1)
 
 Row number of header
 
-=item start_row (optional, default = 2)
+=item * start_row (optional, default = 2)
 
 The index of the first row of the data section.
 
-=item insertion_mode (optional, default = 'overwrite')
+=item * insertion_mode (optional, default = 'overwrite')
 
 Insertion mode. 'insert' inserts new row into the worksheet when creating record, 'overwrite' tries to use existing rows in the worksheet.
 
-=item columns
+=item * columns
 
 Columns of the table. you can specify them as hashref, arrayref, arrayref of hashref.
 
@@ -213,6 +213,16 @@ from 'A' to 'Z' order.
 
 =back
 
+=head1 DELETING A SPREADSHEET
+
+To delete a spreadsheet, use L<Net::Google::DocumentsList>.
+
+  my $docs = Net::Google::DocumentsList->new(
+    username => 'mygoogleaccount@example.com',
+    password => 'mypassword'
+  );
+  $docs->item({resource_id => 'spreadsheet:'. $ss->key})->delete;
+
 =head1 SEE ALSO
 
 L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
@@ -226,6 +236,8 @@ L<Net::Google::Spreadsheets>
 L<Net::Google::Spreadsheets::Worksheet>
 
 L<Net::Google::Spreadsheets::Table>
+
+L<Net::Google::DocumentsList>
 
 =head1 AUTHOR
 

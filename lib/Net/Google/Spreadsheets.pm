@@ -6,7 +6,7 @@ use 5.008001;
 use Net::Google::AuthSub;
 use Net::Google::DataAPI::Auth::AuthSub;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 with 'Net::Google::DataAPI::Role::Service';
 has gdata_version => (
@@ -206,17 +206,17 @@ Net::Google::Spreadsheets is a Perl module for using Google Spreadsheets API.
 
 Creates Google Spreadsheet API client. It takes arguments below:
 
-=over 4
+=over 2
 
-=item username
+=item * username
 
 Username for Google. This should be full email address format like 'mygoogleaccount@example.com'.
 
-=item password
+=item * password
 
 Password corresponding to the username.
 
-=item source
+=item * source
 
 Source string to pass to Net::Google::AuthSub.
 
@@ -226,17 +226,17 @@ Source string to pass to Net::Google::AuthSub.
 
 returns list of Net::Google::Spreadsheets::Spreadsheet objects. Acceptable arguments are:
 
-=over 4
+=over 2
 
-=item title
+=item * title
 
 title of the spreadsheet.
 
-=item title-exact
+=item * title-exact
 
 whether title search should match exactly or not.
 
-=item key
+=item * key
 
 key for the spreadsheet. You can get the key via the URL for the spreadsheet.
 http://spreadsheets.google.com/ccc?key=key
@@ -281,19 +281,19 @@ In OAuth case, like this:
 
 To test this module, you have to prepare as below.
 
-=over 4
+=over 2
 
-=item create a spreadsheet by hand
+=item * create a spreadsheet by hand
 
 Go to L<http://docs.google.com> and create a spreadsheet.
 
-=item set SPREADSHEET_TITLE environment variable
+=item * set SPREADSHEET_TITLE environment variable
 
   export SPREADSHEET_TITLE='my test spreadsheet'
 
 or so.
 
-=item set username and password for google.com via Config::Pit
+=item * set username and password for google.com via Config::Pit
 
 install Config::Pit and type 
 
@@ -305,7 +305,7 @@ then some editor comes up and type your username and password like
   username: myname@gmail.com
   password: foobarbaz
 
-=item run tests
+=item * run tests
 
 as always,
 

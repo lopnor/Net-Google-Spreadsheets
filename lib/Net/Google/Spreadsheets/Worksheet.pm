@@ -140,23 +140,29 @@ Net::Google::Spreadsheets::Worksheet - Representation of worksheet.
   # search a row
   my $row = $worksheet->row({sq => 'name = "Nobuo Danjou"'});
 
+  # delete the worksheet
+  # Note that this will fail if the worksheet is the only one
+  # within the spreadsheet.
+
+  $worksheet->delete;
+
 =head1 METHODS
 
 =head2 rows(\%condition)
 
 Returns a list of Net::Google::Spreadsheets::Row objects. Acceptable arguments are:
 
-=over 4
+=over 2
 
-=item sq
+=item * sq
 
 Structured query on the full text in the worksheet. see the URL below for detail.
 
-=item orderby
+=item * orderby
 
 Set column name to use for ordering.
 
-=item reverse
+=item * reverse
 
 Set 'true' or 'false'. The default is 'false'.
 
@@ -186,19 +192,19 @@ contents of a row as a hashref.
 
 Returns a list of Net::Google::Spreadsheets::Cell objects. Acceptable arguments are:
 
-=over 4
+=over 2
 
-=item min-row
+=item * min-row
 
-=item max-row
+=item * max-row
 
-=item min-col
+=item * min-col
 
-=item max-col
+=item * max-col
 
-=item range
+=item * range
 
-=item return-empty
+=item * return-empty
 
 =back
 
@@ -208,11 +214,11 @@ See L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html#C
 
 Returns Net::Google::Spreadsheets::Cell object. Arguments are:
 
-=over 4
+=over 2
 
-=item col
+=item * col
 
-=item row
+=item * row
 
 =back
 
@@ -220,15 +226,19 @@ Returns Net::Google::Spreadsheets::Cell object. Arguments are:
 
 update multiple cells with a batch request. Pass a list of hash references containing:
 
-=over 4
+=over 2
 
-=item col
+=item * col
 
-=item row
+=item * row
 
-=item input_value
+=item * input_value
 
 =back
+
+=head2 delete
+
+Deletes the worksheet. Note that this will fail if the worksheet is only one within the spreadsheet.
 
 =head1 SEE ALSO
 
