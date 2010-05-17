@@ -169,6 +169,7 @@ Set 'true' or 'false'. The default is 'false'.
 =back
 
 See L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html#ListParameters> for details.
+Note that 'the first row of the worksheet' you can see with the browser is 'header' for the rows, so you can't get it with this method. Use cell(s) method instead if you need to access them.
 
 =head2 row(\%condition)
 

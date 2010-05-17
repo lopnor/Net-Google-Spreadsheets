@@ -76,12 +76,24 @@ Net::Google::Spreadsheets::Record - A representation class for Google Spreadshee
   
   my $value = $record->param('name');
   # returns 'Nobuo Danjou'
+  # you can also get it via content like this:
+  my $value_via_content = $record->content->{name};
   
   my $newval = $record->param({address => 'elsewhere'});
   # updates address (and keeps other fields) and returns new record value (with all fields)
 
   my $hashref2 = $record->param;
   # same as $record->content;
+
+  # setting whole new content
+  $record->content(
+    {
+        id => 8080,
+        address => 'nowhere',
+        zip => '999-9999',
+        name => 'nowhere man'
+    }
+  );
   
   # delete a record
   $record->delete;

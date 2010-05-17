@@ -1,5 +1,9 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.12    Sun Apr 24 13:50:00 2010
+        - fixed getting table error (thanks to sartak)
+        - added documentations on tables, rows (thanks to siguc)
+
 0.11    Thu Apr 22 16:10:00 2010
         - added documentation on deleteing items (thanks to siguc)
 

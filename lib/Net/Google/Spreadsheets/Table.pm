@@ -4,6 +4,8 @@ use Any::Moose '::Util::TypeConstraints';
 use namespace::autoclean;
 use Net::Google::DataAPI;
 use XML::Atom::Util qw(nodelist first create_element);
+use Net::Google::Spreadsheets::Worksheet;
+use Net::Google::Spreadsheets::Record;
 
 with 'Net::Google::DataAPI::Role::Entry';
 
@@ -96,7 +98,7 @@ around to_atom => sub {
     my $data = create_element($gsns, 'data');
     $data->setAttribute(startRow => $self->start_row);
     $data->setAttribute(insertionMode => $self->insertion_mode);
-    $data->setAttribute(startRow => $self->start_row) if $self->start_row;
+    $data->setAttribute(numRows => $self->num_rows) if $self->num_rows;
     for ( @{$self->columns} ) {
         my $column = create_element($gsns, 'column');
         $column->setAttribute(index => $_->index);
@@ -182,7 +184,7 @@ Set column name to use for ordering.
 
 =item * reverse
 
-Set 'true' or 'false'. The default is 'false'.
+Set 'true' or 'false'. The default is 'false'. It reverses the order.
 
 =back
 
@@ -205,6 +207,12 @@ Arguments are contents of a row as a hashref.
         age  => '33',
     }
   );
+
+=head1 CAVEATS
+
+You can access to the table structure and records only from the Google Spreadsheets API. It means you can't create tables, add records or delete tables via web interface. It will make some problems if you want to access the data both from API and web interface. In that case, you should use $worksheets->row(s) methods instead. See the documents below for details:
+
+L<http://code.google.com/intl/en/apis/spreadsheets/data/3.0/developers_guide_protocol.html#TableFeeds>
 
 =head1 SEE ALSO
 
