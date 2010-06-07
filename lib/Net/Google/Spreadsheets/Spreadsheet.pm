@@ -170,6 +170,10 @@ Row number of header
 
 The index of the first row of the data section.
 
+=item * num_rows (optional, default = 0)
+
+Number of rows of the data section initially made.
+
 =item * insertion_mode (optional, default = 'overwrite')
 
 Insertion mode. 'insert' inserts new row into the worksheet when creating record, 'overwrite' tries to use existing rows in the worksheet.

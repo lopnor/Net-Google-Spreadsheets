@@ -47,7 +47,7 @@ ok my $table = $ss->add_table(
     my $value2 = {
         name => 'Kazuhiro Osawa',
         nick => 'yappo',
-        'mail address' => '',
+        'mail address' => 'foobar@example.com',
     };
     $record->content($value2);
     is_deeply $record->content, $value2;

@@ -18,6 +18,7 @@ my $previous_table_count = scalar @t;
             worksheet => $ws,
             header => 1,
             start_row => 2,
+            num_rows => 15,
             columns => [
             {index => 1, name => 'name'},
             {index => 2, name => 'mail address'},
@@ -43,6 +44,7 @@ my $previous_table_count = scalar @t;
     is $t->worksheet, $ws->title;
     is $t->header, 1;
     is $t->start_row, 2;
+    is $t->num_rows, 15;
     is scalar @{$t->columns}, 3;
     ok grep {$_->name eq 'name' && $_->index eq 'A'} @{$t->columns};
     ok grep {$_->name eq 'mail address' && $_->index eq 'B'} @{$t->columns};
