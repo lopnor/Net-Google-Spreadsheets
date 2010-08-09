@@ -48,7 +48,7 @@ sub _build_auth {
 }
 
 feedurl spreadsheet => (
-    default => 'http://spreadsheets.google.com/feeds/spreadsheets/private/full',
+    default => 'https://spreadsheets.google.com/feeds/spreadsheets/private/full',
     entry_class => 'Net::Google::Spreadsheets::Spreadsheet',
     can_add => 0,
 );

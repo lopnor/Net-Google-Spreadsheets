@@ -17,7 +17,7 @@ ok my $service = service;
     ok my $ss = spreadsheet;
     isa_ok $ss, 'Net::Google::Spreadsheets::Spreadsheet';
     is $ss->title, $t::Util::SPREADSHEET_TITLE;
-    like $ss->id, qr{^http://spreadsheets.google.com/feeds/spreadsheets/};
+    like $ss->id, qr{^https://spreadsheets.google.com/feeds/spreadsheets/};
     isa_ok $ss->author, 'XML::Atom::Person';
     is $ss->author->email, config->{username};
     my $key = $ss->key;

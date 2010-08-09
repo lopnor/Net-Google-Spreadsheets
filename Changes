@@ -1,5 +1,7 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+        - change default feed URL to use SSL, since Google is returning those now
+
 0.12    Sun Jul 07 13:00:00 2010
         - fixed getting table error (thanks to sartak)
         - added documentations on tables, rows (thanks to siguc)
