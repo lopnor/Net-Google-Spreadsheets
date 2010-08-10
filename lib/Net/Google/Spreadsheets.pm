@@ -6,7 +6,7 @@ use 5.008001;
 use Net::Google::AuthSub;
 use Net::Google::DataAPI::Auth::AuthSub;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 with 'Net::Google::DataAPI::Role::Service';
 has gdata_version => (
