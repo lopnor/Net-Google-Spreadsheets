@@ -1,6 +1,5 @@
 package Net::Google::Spreadsheets::Worksheet;
 use Any::Moose;
-use namespace::autoclean;
 use Net::Google::DataAPI;
 
 with 'Net::Google::DataAPI::Role::Entry';
@@ -87,6 +86,9 @@ sub batchupdate_cell {
         $node->getAttribute('code') == 200;
     } $res_feed->entries;
 }
+
+no Any::Moose;
+no Net::Google::DataAPI;
 
 1;
 __END__

@@ -1,6 +1,5 @@
 package Net::Google::Spreadsheets::Record;
 use Any::Moose;
-use namespace::autoclean;
 use XML::Atom::Util qw(nodelist);
 
 with 
@@ -24,6 +23,8 @@ around to_atom => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
+
+no Any::Moose;
 
 1;
 

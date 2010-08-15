@@ -1,6 +1,5 @@
 package Net::Google::Spreadsheets::Cell;
 use Any::Moose;
-use namespace::autoclean;
 use XML::Atom::Util qw(first);
 
 with 'Net::Google::DataAPI::Role::Entry';
@@ -55,6 +54,8 @@ around to_atom => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
+
+no Any::Moose;
 
 1;
 __END__
