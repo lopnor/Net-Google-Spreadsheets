@@ -7,7 +7,6 @@ requires 'XML::Atom';
 requires 'Net::Google::AuthSub';
 requires 'Net::Google::DataAPI' => '0.19';
 requires 'URI';
-requires 'namespace::autoclean';
 requires_any_moose(
     prefer => 'Mouse',
     moose => '0.56',
