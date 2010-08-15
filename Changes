@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.14    Sun Aug 15 13:15:00 2010
+        - less dependencies
+
 0.13    Tue Aug 10 10:30:00 2010
         - change default feed URL to use SSL, since Google is returning those now (thanks to dwc)
 

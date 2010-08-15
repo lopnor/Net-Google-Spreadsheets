@@ -37,6 +37,7 @@ feedurl table => (
 __PACKAGE__->meta->make_immutable;
 
 no Any::Moose;
+no Net::Google::DataAPI;
 
 1;
 __END__
