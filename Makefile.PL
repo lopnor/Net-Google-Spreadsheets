@@ -5,7 +5,7 @@ all_from 'lib/Net/Google/Spreadsheets.pm';
 requires 'Carp';
 requires 'XML::Atom';
 requires 'Net::Google::AuthSub';
-requires 'Net::Google::DataAPI' => '0.21';
+requires 'Net::Google::DataAPI' => '0.27';
 requires 'URI';
 requires_any_moose(
     prefer => 'Mouse',
@@ -20,7 +20,5 @@ build_requires 'Test::More' => '0.88';
 build_requires 'Test::Exception';
 build_requires 'Test::MockModule';
 build_requires 'Test::MockObject';
-use_test_base;
-auto_include;
 auto_set_repository;
 WriteAll;

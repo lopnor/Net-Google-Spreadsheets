@@ -37,7 +37,7 @@ throws_ok {
         );
         throws_ok {
             $service->spreadsheets;
-        } qr{302 Found};
+        } qr{is broken: Empty String};
     }
     {
         $ua->mock('request' => sub {return HTTP::Response->parse(<<END)});

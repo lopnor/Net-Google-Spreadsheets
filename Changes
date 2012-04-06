@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.15    Fri Apr 06 22:20:00 2012
+        - follow Net::Google::DataAPI changes and fix broken test
+
 0.14    Sun Aug 15 13:15:00 2010
         - less dependencies
 
