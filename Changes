@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Google::Spreadsheets
 
+0.1501  Mon Apr 30 09:05:00 2012
+        - update link URLs for documentations by google (#76767)
+
 0.15    Fri Apr 06 22:20:00 2012
         - follow Net::Google::DataAPI changes and fix broken test
 

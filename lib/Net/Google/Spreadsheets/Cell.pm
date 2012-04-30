@@ -107,9 +107,7 @@ Read only attribute. You can get the result of formula.
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
-
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
+L<https://developers.google.com/google-apps/spreadsheets/>
 
 L<Net::Google::AuthSub>
 
@@ -117,7 +115,7 @@ L<Net::Google::Spreadsheets>
 
 =head1 AUTHOR
 
-Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
+Nobuo Danjou E<lt>danjou@soffritto.orgE<gt>
 
 =cut
 

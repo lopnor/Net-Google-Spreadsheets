@@ -5,7 +5,7 @@ use Net::Google::DataAPI;
 use Net::Google::AuthSub;
 use Net::Google::DataAPI::Auth::AuthSub;
 
-our $VERSION = '0.15';
+our $VERSION = '0.1501';
 
 with 'Net::Google::DataAPI::Role::Service';
 has gdata_version => (
@@ -138,7 +138,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
     {
         name => 'Nobuo Danjou',
         nick => 'lopnor',
-        mail => 'nobuo.danjou@gmail.com',
+        mail => 'danjou@soffritto.org',
         age  => '33',
     }
   );
@@ -157,7 +157,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   $row->content(
     {
         nick => 'lopnor',
-        mail => 'nobuo.danjou@gmail.com',
+        mail => 'danjou@soffritto.org',
     }
   );
 
@@ -180,7 +180,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
     {
         name => 'Nobuo Danjou',
         nick => 'lopnor',
-        'mail address' => 'nobuo.danjou@gmail.com',
+        'mail address' => 'danjou@soffritto.org',
         age  => '33',
     }
   );
@@ -188,7 +188,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   # find a record
   my $found = $table->record(
     {
-        sq => '"mail address" = "nobuo.danjou@gmail.com"'
+        sq => '"mail address" = "danjou@soffritto.org"'
     }
   );
 
@@ -319,13 +319,11 @@ as always,
 
 =head1 AUTHOR
 
-Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
+Nobuo Danjou E<lt>danjou@soffritto.orgE<gt>
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
-
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
+L<https://developers.google.com/google-apps/spreadsheets/>
 
 L<Net::Google::AuthSub>
 

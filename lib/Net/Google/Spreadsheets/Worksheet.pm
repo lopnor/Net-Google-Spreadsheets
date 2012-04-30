@@ -128,7 +128,7 @@ Net::Google::Spreadsheets::Worksheet - Representation of worksheet.
     {
         name => 'Nobuo Danjou',
         nick => 'lopnor',
-        mail => 'nobuo.danjou@gmail.com',
+        mail => 'danjou@soffritto.org',
         age  => '33',
     }
   );
@@ -186,7 +186,7 @@ contents of a row as a hashref.
     {
         name => 'Nobuo Danjou',
         nick => 'lopnor',
-        mail => 'nobuo.danjou@gmail.com',
+        mail => 'danjou@soffritto.org',
         age  => '33',
     }
   );
@@ -245,9 +245,7 @@ Deletes the worksheet. Note that this will fail if the worksheet is only one wit
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
-
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
+L<https://developers.google.com/google-apps/spreadsheets/>
 
 L<Net::Google::AuthSub>
 
@@ -255,6 +253,6 @@ L<Net::Google::Spreadsheets>
 
 =head1 AUTHOR
 
-Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
+Nobuo Danjou E<lt>danjou@soffritto.orgE<gt>
 
 =cut

@@ -157,7 +157,7 @@ Net::Google::Spreadsheets::Table - A representation class for Google Spreadsheet
     {
         name => 'Nobuo Danjou',
         nick => 'lopnor',
-        mail => 'nobuo.danjou@gmail.com',
+        mail => 'danjou@soffritto.org',
         age  => '33',
     }
   );
@@ -208,7 +208,7 @@ Arguments are contents of a row as a hashref.
     {
         name => 'Nobuo Danjou',
         nick => 'lopnor',
-        mail => 'nobuo.danjou@gmail.com',
+        mail => 'danjou@soffritto.org',
         age  => '33',
     }
   );
@@ -221,9 +221,7 @@ L<http://code.google.com/intl/en/apis/spreadsheets/data/3.0/developers_guide_pro
 
 =head1 SEE ALSO
 
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/developers_guide_protocol.html>
-
-L<http://code.google.com/intl/en/apis/spreadsheets/docs/3.0/reference.html>
+L<https://developers.google.com/google-apps/spreadsheets/>
 
 L<Net::Google::AuthSub>
 
@@ -235,7 +233,7 @@ L<Net::Google::Spreadsheets::Record>
 
 =head1 AUTHOR
 
-Nobuo Danjou E<lt>nobuo.danjou@gmail.comE<gt>
+Nobuo Danjou E<lt>danjou@soffritto.orgE<gt>
 
 =cut
 
