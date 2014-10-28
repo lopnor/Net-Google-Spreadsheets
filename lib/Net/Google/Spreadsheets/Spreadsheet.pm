@@ -17,10 +17,24 @@ entry_has key => (
     is => 'ro',
     from_atom => sub {
         my ($self, $atom) = @_;
+
+        # find the key for old google spreadsheet
         my ($link) = grep {
             $_->rel eq 'alternate' && $_->type eq 'text/html'
         } $atom->link;
-        return {URI->new($link->href)->query_form}->{key};
+        if(my $key = {URI->new($link->href)->query_form}->{key}) {
+            return $key;
+        }
+
+        # it's new google spreadsheet
+        ($link) = grep {
+            $_->rel eq 'self' && $_->type eq 'application/atom+xml'
+        } $atom->link;
+        if($link->href =~ m(https://spreadsheets.google.com/feeds/spreadsheets/private/full/(.*)$)) {
+            return $1;
+        }
+
+	return ;
     },
 );
 
