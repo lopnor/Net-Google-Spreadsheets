@@ -54,11 +54,10 @@ feedurl spreadsheet => (
 
 around spreadsheets => sub {
     my ($next, $self, $args) = @_;
-    my @result = $next->($self, $args);
     if (my $key = $args->{key}) {
-        @result = grep {$_->key eq $key} @result;
+        $args = $self->get_entry("https://spreadsheets.google.com/feeds/spreadsheets/private/full/$key");
     }
-    return @result;
+    return $next->($self, $args);
 };
 
 sub BUILD {
