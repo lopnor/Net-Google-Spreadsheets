@@ -92,7 +92,7 @@ Net::Google::Spreadsheets - A Perl module for using Google Spreadsheets API.
   # find a spreadsheet by key
   my $spreadsheet = $service->spreadsheet(
     {
-        key => 'key_of_a_spreasheet'
+        key => 'key_of_a_spreadsheet'
     }
   );
 
