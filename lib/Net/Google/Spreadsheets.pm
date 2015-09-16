@@ -255,7 +255,7 @@ you can optionally pass auth object argument when initializing
 Net::Google::Spreadsheets instance.
 
 If you want to use AuthSub mechanism, make Net::Google::DataAPI::Auth::AuthSub
-object and path it to the constructor:
+object and pass it to the constructor:
 
   my $authsub = Net::Google::AuthSub->new;
   $authsub->auth(undef, $session_token);
@@ -289,9 +289,9 @@ To test this module, you have to prepare as below.
 
 Go to L<http://docs.google.com> and create a spreadsheet.
 
-=item * set SPREADSHEET_TITLE environment variable
+=item * set SPREADSHEETS_TITLE environment variable
 
-  export SPREADSHEET_TITLE='my test spreadsheet'
+  export SPREADSHEETS_TITLE='my test spreadsheet'
 
 or so.
 
