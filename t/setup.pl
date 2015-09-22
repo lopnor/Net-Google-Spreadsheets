@@ -7,8 +7,8 @@ use Data::Dumper;
 use JSON qw(encode_json decode_json);
 
 my $oauth2 = Net::Google::DataAPI::Auth::OAuth2->new(
-    client_id       => '155919245515-hecvp8u7d5upvct9mbgrl61epr0c5vh8.apps.googleusercontent.com',
-    client_secret   => '1iE14ndZRYReD7mbOyg8EzbR',
+    client_id       => $ENV{CLIENT_ID},
+    client_secret   => $ENV{CLIENT_SECRET},
     scope           => ['http://spreadsheets.google.com/feeds/'],
 );
 my $url = $oauth2->authorize_url();
