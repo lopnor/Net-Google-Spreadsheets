@@ -4,6 +4,9 @@ use warnings;
 use utf8;
 use Test::More;
 use Net::Google::Spreadsheets;
+use Net::Google::DataAPI::Auth::OAuth2;
+use Net::OAuth2::AccessToken;
+use JSON qw(encode_json decode_json);
 
 sub PIT_KEY { 'google.com' }
 
@@ -73,8 +76,8 @@ sub check_config {
     my $key = shift;
     my $config = &config($key);
     unless ($config) {
-        plan skip_all 
-            => "set username and password for $key via 'ppit set $key'";
+        plan skip_all
+            => "set oauth 2.0 client_id, client_secret, access_token for $key via 'ppit set $key'";
         return;
     }
     return $config;
@@ -96,7 +99,7 @@ sub config {
     my $key = shift;
     return $config if $config;
     my $c = Config::Pit::get($key);
-    unless ($c->{username} && $c->{password}) {
+    unless ($c->{client_id} && $c->{client_secret} && $c->{access_token}) {
         return;
     }
     $config = $c;
@@ -106,12 +109,18 @@ sub config {
 sub service {
     return $service if $service;
     my $c = &config or return;
-    my $s = Net::Google::Spreadsheets->new(
-        {
-            username => $c->{username},
-            password => $c->{password},
-        }
-    ) or return;
+
+    my $oauth2 = Net::Google::DataAPI::Auth::OAuth2->new(
+        client_id       => $c->{client_id},
+        client_secret   => $c->{client_secret},
+        scope           => ['http://spreadsheets.google.com/feeds/'],
+    );
+
+    my $token_session = decode_json($c->{access_token});
+    my $access_token = Net::OAuth2::AccessToken->session_thaw($token_session, profile => $oauth2);
+    $oauth2->access_token($access_token);
+
+    my $s = Net::Google::Spreadsheets->new({ auth => $oauth2 }) or return;
     $service = $s;
     return $service;
 }
