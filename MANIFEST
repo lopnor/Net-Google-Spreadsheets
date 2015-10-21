@@ -30,6 +30,7 @@ t/05_row.t
 t/06_table.t
 t/07_record.t
 t/08_error.t
+t/setup.pl
 t/Util.pm
 xt/01_podspell.t
 xt/02_perlcritic.t
