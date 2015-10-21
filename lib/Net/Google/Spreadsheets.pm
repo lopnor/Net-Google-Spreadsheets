@@ -255,7 +255,7 @@ you can optionally pass auth object argument when initializing
 Net::Google::Spreadsheets instance.
 
 If you want to use AuthSub mechanism, make Net::Google::DataAPI::Auth::AuthSub
-object and path it to the constructor:
+object and pass it to the constructor:
 
   my $authsub = Net::Google::AuthSub->new;
   $authsub->auth(undef, $session_token);
@@ -287,25 +287,47 @@ To test this module, you have to prepare as below.
 
 =item * create a spreadsheet by hand
 
-Go to L<http://docs.google.com> and create a spreadsheet.
+Go to L<https://docs.google.com/spreadsheets> and create a spreadsheet.
 
-=item * set SPREADSHEET_TITLE environment variable
+=item * set SPREADSHEETS_TITLE environment variable
 
-  export SPREADSHEET_TITLE='my test spreadsheet'
+  export SPREADSHEETS_TITLE='my test spreadsheet'
 
 or so.
 
-=item * set username and password for google.com via Config::Pit
+=item * add credentials in Google developers console
 
-install Config::Pit and type 
+Go to L<https://console.developers.google.com>
 
+Add credential at:
+    APIs & auth => Credentials => Add Credentials
+
+for new credential created, set environment variables CLIENT_ID and CLIENT_SECRET accordingly
+
+  export CLIENT_ID='..client_id..'
+  export CLIENT_SECRET='..client_secret..'
+
+=item run setup script to get oauth 2.0 access token
+  perl t/setup.pl
+  follow instruction as:
+     - paste URL in browser to get code
+     - paste code to generate access token
+     - copy access token
+
+=item * set client_id, client_secret and access_token for google.com via Config::Pit
+
+install Config::Pit and setup editor for ppit
+  EXPORT EDITOR=vim
+
+type:
   ppit set google.com
 
 then some editor comes up and type your username and password like
 
   ---
-  username: myname@gmail.com
-  password: foobarbaz
+  "client_id":      '...client_id...'
+  "client_secret":  '...client_secret...'
+  "access_token":   '...access_token...'
 
 =item * run tests
 
